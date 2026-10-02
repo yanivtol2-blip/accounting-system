@@ -1,0 +1,9 @@
+# Created by Kringl for this project. Edit it freely.
+node_modules/
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+*.log
+.playwright-mcp/
