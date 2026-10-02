@@ -1,0 +1,22 @@
+{
+  "name": "accounting-system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "מערכת הנהלת חשבונות למשרד: העלאת חשבוניות הוצאה, קריאה אוטומטית, תור אישור וספרים",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/server.js",
+    "create-user": "node --disable-warning=ExperimentalWarning scripts/create-user.js",
+    "demo": "node --disable-warning=ExperimentalWarning scripts/seed-demo.js",
+    "test": "node --disable-warning=ExperimentalWarning --test \"test/**/*.test.js\""
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.131.0",
+    "express": "^5.2.1",
+    "multer": "^2.4.0"
+  }
+}
