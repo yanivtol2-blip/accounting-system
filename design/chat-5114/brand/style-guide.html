@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Signiv - מדריך עיצוב</title>
+<link rel="icon" href="logos/signiv-favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="signiv.css">
+<style>
+ section.g{padding-block:var(--s-12);border-bottom:1px solid var(--border)}
+ .grid{display:grid;gap:var(--s-5)} .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))} .g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+ .tile{border-radius:var(--r-lg);border:1px solid var(--border);overflow:hidden;background:var(--surface)} .tile .pic{display:grid;place-items:center;padding:var(--s-8);min-height:150px} .tile .pic img{max-width:100%;height:auto} .tile .cap{padding:var(--s-3) var(--s-4);font-size:var(--fs-sm);border-top:1px solid var(--border)} .tile .cap code{color:var(--text-3);font-size:11px;direction:ltr;display:block}
+ .on-navy{background:var(--brand-950)} .on-white{background:#fff} .on-blue{background:var(--gradient-brand)} .on-soft{background:var(--brand-50)}
+ .sw{height:84px;border-radius:var(--r-md);display:flex;align-items:flex-end;padding:var(--s-2) var(--s-3);font-size:11px;font-weight:600;direction:ltr}
+ .ramp{display:grid;grid-template-columns:repeat(11,1fr);gap:6px;direction:ltr} .ramp .sw{height:64px;padding:6px;font-size:10px}
+ h2.sec{display:flex;align-items:center;gap:var(--s-3)} h2.sec small{font-size:var(--fs-sm);font-weight:500;color:var(--text-3)}
+ .type-row{display:grid;grid-template-columns:120px 1fr;gap:var(--s-4);align-items:baseline;padding-block:var(--s-3);border-bottom:1px solid var(--border)} .type-row code{font-size:12px;color:var(--text-3);direction:ltr}
+ .app{display:grid;grid-template-columns:264px 1fr;border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;background:var(--bg)} @media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{display:none}}
+ .kpi{display:grid;gap:4px} .kpi b{font-size:var(--fs-3xl);font-weight:800}
+ .donts li{margin-block:6px}
+</style></head>
+<body>
+<header class="topbar">
+  <img class="logo" src="logos/signiv-logo-horizontal-light.svg" alt="signiv">
+  <nav class="nav"><a href="#logo" aria-current="page">לוגו</a><a href="#color">צבעים</a><a href="#type">טיפוגרפיה</a><a href="#ui">רכיבים</a><a href="#screens">מסכים לדוגמה</a></nav>
+  <span class="grow"></span>
+  <button class="btn btn-secondary btn-sm" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">מצב כהה / בהיר</button>
+</header>
+
+<main class="container">
+<section class="g" id="logo">
+  <h1>Signiv</h1>
+  <p class="muted reading">שפה עיצובית לאתר ולמערכת החתמת המסמכים. הלוגו: מסמך, חתימה ועט שחותם. הנקודה הירוקה ב-i היא "אישור", והיא חוזרת בכל המערכת כצבע של הצלחה.</p>
+  <h2 class="sec">הלוגו וגרסאותיו</h2>
+  <div class="grid g2">
+    <div class="tile"><div class="pic on-white"><img src="logos/signiv-logo-horizontal-light.svg" width="300" alt=""></div><div class="cap">אופקי, רקע בהיר (ראשי)<code>logos/signiv-logo-horizontal-light.svg</code></div></div>
+    <div class="tile"><div class="pic on-navy"><img src="logos/signiv-logo-horizontal-dark.svg" width="300" alt=""></div><div class="cap">אופקי, רקע כהה<code>logos/signiv-logo-horizontal-dark.svg</code></div></div>
+    <div class="tile"><div class="pic on-white"><img src="logos/signiv-logo-stacked-light.svg" width="200" alt=""></div><div class="cap">מוערם, רקע בהיר<code>logos/signiv-logo-stacked-light.svg</code></div></div>
+    <div class="tile"><div class="pic on-navy"><img src="logos/signiv-logo-stacked-dark.svg" width="200" alt=""></div><div class="cap">מוערם, רקע כהה<code>logos/signiv-logo-stacked-dark.svg</code></div></div>
+    <div class="tile"><div class="pic on-white"><img src="logos/signiv-wordmark-light.svg" width="180" alt=""></div><div class="cap">כיתוב בלבד<code>logos/signiv-wordmark-light.svg</code></div></div>
+    <div class="tile"><div class="pic on-navy"><img src="logos/signiv-wordmark-dark.svg" width="180" alt=""></div><div class="cap">כיתוב בלבד, רקע כהה<code>logos/signiv-wordmark-dark.svg</code></div></div>
+    <div class="tile"><div class="pic on-white"><img src="logos/signiv-logo-mono-navy.svg" width="260" alt=""></div><div class="cap">חד-צבעי כהה: הדפסה, חותמות, פקס<code>logos/signiv-logo-mono-navy.svg</code></div></div>
+    <div class="tile"><div class="pic on-navy"><img src="logos/signiv-logo-mono-white.svg" width="260" alt=""></div><div class="cap">חד-צבעי לבן<code>logos/signiv-logo-mono-white.svg</code></div></div>
+  </div>
+  <h3 style="margin-block-start:var(--s-8)">אייקונים</h3>
+  <div class="grid g3">
+    <div class="tile"><div class="pic on-soft"><img src="logos/signiv-icon.svg" width="96" alt=""></div><div class="cap">אייקון אפליקציה<code>signiv-icon.svg</code></div></div>
+    <div class="tile"><div class="pic on-soft"><span class="row" style="gap:16px;align-items:flex-end"><img src="logos/signiv-favicon.svg" width="48" alt=""><img src="logos/signiv-favicon.svg" width="32" alt=""><img src="logos/signiv-favicon.svg" width="16" alt=""></span></div><div class="cap">פאביקון, מפושט לגדלים קטנים<code>signiv-favicon.svg, favicon.ico</code></div></div>
+    <div class="tile"><div class="pic on-soft"><img src="logos/signiv-avatar.svg" width="96" style="border-radius:50%" alt=""></div><div class="cap">תמונת פרופיל לרשתות (חיתוך עגול)<code>signiv-avatar.svg</code></div></div>
+    <div class="tile"><div class="pic on-white"><img src="logos/signiv-icon-mono-navy.svg" width="72" alt=""></div><div class="cap">אייקון חד-צבעי כהה<code>signiv-icon-mono-navy.svg</code></div></div>
+    <div class="tile"><div class="pic on-navy"><img src="logos/signiv-icon-mono-white.svg" width="72" alt=""></div><div class="cap">אייקון חד-צבעי לבן<code>signiv-icon-mono-white.svg</code></div></div>
+    <div class="tile"><div class="pic on-soft"><img src="png/signiv-share-1200x630.png" width="220" style="border-radius:8px" alt=""></div><div class="cap">תמונת שיתוף (Open Graph) 1200x630<code>png/signiv-share-1200x630.png</code></div></div>
+  </div>
+  <div class="grid g2" style="margin-block-start:var(--s-8)">
+    <div class="card"><h4>כללי שימוש</h4><ul class="small muted" style="padding-inline-start:20px">
+      <li>רווח חופשי סביב הלוגו: לפחות חצי מגובה האייקון.</li>
+      <li>גודל מינימלי: אייקון 24 פיקסלים, לוגו אופקי 96 פיקסלים רוחב. מתחת לזה משתמשים בפאביקון.</li>
+      <li>על רקע בהיר: גרסת "light". על כחול לילה או כחול מותג: גרסת "dark".</li>
+      <li>הנקודה הירוקה נשארת ירוקה. בהדפסה בצבע אחד משתמשים בגרסה החד-צבעית.</li></ul></div>
+    <div class="card"><h4>לא עושים</h4><ul class="small muted donts" style="padding-inline-start:20px">
+      <li>לא מותחים, מסובבים או מוסיפים צל ללוגו.</li>
+      <li>לא מקלידים את הכיתוב מחדש בפונט אחר: משתמשים בקבצים.</li>
+      <li>לא מציבים את הגרסה הצבעונית על רקע כחול דומה לאייקון.</li>
+      <li>לא משנים את הצבע של העט או של הנקודה.</li></ul></div>
+  </div>
+</section>
+
+<section class="g" id="color">
+  <h2 class="sec">צבעים <small>הקודים גם ב-signiv.css וב-tokens.json</small></h2>
+  <div class="grid g3">
+    <div><div class="sw" style="background:#2563eb;color:#fff">brand-600 #2563eb</div><p class="small muted" style="margin-block-start:8px"><b>כחול מותג</b>: כפתור ראשי, קישורים, מצב פעיל.</p></div>
+    <div><div class="sw" style="background:#0f1f4d;color:#fff">navy #0f1f4d</div><p class="small muted" style="margin-block-start:8px"><b>כחול לילה</b>: טקסט, כותרות, רקעים כהים.</p></div>
+    <div><div class="sw" style="background:#22c55e;color:#06210f">approve-500 #22c55e</div><p class="small muted" style="margin-block-start:8px"><b>ירוק אישור</b>: נחתם, הצלחה, כפתור "חתום".</p></div>
+  </div>
+  <h4 style="margin-block-start:var(--s-6)">כחול מותג</h4>
+  <div class="ramp" id="r-brand"></div>
+  <h4 style="margin-block-start:var(--s-5)">ירוק אישור</h4>
+  <div class="ramp" id="r-approve"></div>
+  <h4 style="margin-block-start:var(--s-5)">ניטרלי (בגוון כחול)</h4>
+  <div class="ramp" id="r-n"></div>
+  <h4 style="margin-block-start:var(--s-5)">סטטוס מסמך</h4>
+  <div class="row" style="flex-wrap:wrap"><span class="badge draft">טיוטה</span><span class="badge sent">נשלח לחתימה</span><span class="badge viewed">נצפה</span><span class="badge signed">נחתם</span><span class="badge declined">נדחה</span><span class="badge expired">פג תוקף</span></div>
+  <div class="row" style="margin-block-start:var(--s-5);flex-wrap:wrap"><div style="width:220px;height:64px;border-radius:12px;background:var(--gradient-brand)"></div><div style="width:220px;height:64px;border-radius:12px;background:var(--gradient-hero)"></div><span class="small muted">הדרגות: מותג, ורקע ראשי (hero)</span></div>
+</section>
+
+<section class="g" id="type">
+  <h2 class="sec">טיפוגרפיה <small>Heebo, עברית ולטינית, גופן משתנה 100 עד 900 (קבצים ב-fonts)</small></h2>
+  <div class="type-row"><code>h1 / 38 / 800</code><h1 style="margin:0">חותמים מכל מקום, בכמה לחיצות</h1></div>
+  <div class="type-row"><code>h2 / 30 / 700</code><h2 style="margin:0">המסמכים שלך מחכים לחתימה</h2></div>
+  <div class="type-row"><code>h3 / 20 / 700</code><h3 style="margin:0">הסכם שירות, נשלח אתמול</h3></div>
+  <div class="type-row"><code>body / 16 / 400</code><p style="margin:0">שלחת את המסמך לשלושה חותמים. כל חותם מקבל קישור אישי, חותם מהנייד או מהמחשב, ואתה מקבל התראה ברגע שהמסמך נחתם.</p></div>
+  <div class="type-row"><code>small / 14 / 400</code><span class="small muted">נשלח ב-14:32, נצפה ב-14:40</span></div>
+  <div class="type-row"><code>.num (LTR)</code><span>טלפון: <span class="num">050-123-4567</span> · דוא"ל: <span class="num">dana@example.com</span></span></div>
+  <p class="small muted" style="margin-block-start:var(--s-4)">כיתוב הלוגו עצמו הוא Plus Jakarta Sans Light והוא מומר לקווים בקבצי ה-SVG: לא להקליד אותו בפונט.</p>
+</section>
+
+<section class="g" id="ui">
+  <h2 class="sec">רכיבים</h2>
+  <div class="grid g2">
+    <div class="card stack"><h4>כפתורים</h4>
+      <div class="row" style="flex-wrap:wrap"><button class="btn">שלח לחתימה</button><button class="btn btn-secondary">שמור טיוטה</button><button class="btn btn-ghost">ביטול</button></div>
+      <div class="row" style="flex-wrap:wrap"><button class="btn btn-approve">חתום עכשיו</button><button class="btn btn-danger">דחה</button><button class="btn" disabled>מושבת</button></div>
+      <div class="row" style="flex-wrap:wrap"><button class="btn btn-sm">קטן</button><button class="btn btn-lg">גדול</button></div></div>
+    <div class="card"><h4>שדות</h4>
+      <div class="field"><label class="label" for="a">שם החותם</label><input id="a" class="input" placeholder="לדוגמה: דנה כהן"></div>
+      <div class="field"><label class="label" for="b">דוא"ל</label><input id="b" class="input num" placeholder="name@example.com"><span class="hint">הקישור לחתימה יישלח לכתובת הזו</span></div>
+      <div class="field error"><label class="label" for="c">טלפון</label><input id="c" class="input" value="12"><span class="hint">מספר הטלפון קצר מדי</span></div>
+      <label class="check"><input type="checkbox" checked> שלח גם תזכורת בוואטסאפ</label></div>
+    <div class="card stack"><h4>הודעות</h4>
+      <div class="alert info">המסמך נשלח. נעדכן אותך כשיחתמו.</div>
+      <div class="alert success">כל החותמים חתמו על ההסכם.</div>
+      <div class="alert warning">הקישור יפוג בעוד 24 שעות.</div>
+      <div class="alert danger">החותם דחה את המסמך.</div></div>
+    <div class="card stack"><h4>שלבים, התקדמות ו-toast</h4>
+      <ol class="steps"><li class="done" data-n="1">העלאה</li><span class="bar done"></span><li class="current" data-n="2">חותמים</li><span class="bar"></span><li data-n="3">שליחה</li></ol>
+      <div class="progress" style="--v:66%"></div><span class="small muted">2 מתוך 3 חתמו</span>
+      <div><span class="toast">&#10003; המסמך נשלח ל-3 חותמים</span></div></div>
+    <div class="card stack"><h4>העלאת מסמך</h4><div class="dropzone"><b>גרור לכאן קובץ PDF או Word</b><span class="small">או לחץ לבחירה מהמחשב</span><button class="btn btn-sm" style="margin-block-start:8px">בחר קובץ</button></div></div>
+    <div class="card"><h4>ציר זמן של מסמך</h4><ul class="timeline small"><li class="ok"><b>נחתם</b> על ידי דנה כהן<br><span class="muted">היום, 14:52</span></li><li><b>נצפה</b> על ידי דנה כהן<br><span class="muted">היום, 14:40</span></li><li><b>נשלח</b> לשלושה חותמים<br><span class="muted">היום, 14:32</span></li></ul></div>
+  </div>
+</section>
+
+<section class="g" id="screens">
+  <h2 class="sec">מסכים לדוגמה <small>כך השפה נראית יחד</small></h2>
+
+  <h3>1. לוח בקרה: המסמכים שלי</h3>
+  <div class="app">
+    <aside class="sidebar"><img src="logos/signiv-logo-horizontal-light.svg" alt="signiv" style="height:38px;margin:0 8px 16px;justify-self:start">
+      <a href="#" aria-current="page">&#9776; המסמכים שלי</a><a href="#">&#9998; חתימה חדשה</a><a href="#">&#128196; תבניות</a><a href="#">&#128101; אנשי קשר</a><a href="#">&#9881; הגדרות</a></aside>
+    <div style="padding:var(--s-8)" class="stack">
+      <div class="row"><h2 style="margin:0">המסמכים שלי</h2><span class="grow"></span><button class="btn">+ שלח מסמך לחתימה</button></div>
+      <div class="grid g3"><div class="card kpi"><span class="muted small">ממתינים לחתימה</span><b>8</b></div><div class="card kpi"><span class="muted small">נחתמו החודש</span><b style="color:var(--success)">42</b></div><div class="card kpi"><span class="muted small">זמן חתימה ממוצע</span><b>3 שעות</b></div></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>מסמך</th><th>חותם</th><th>נשלח</th><th>סטטוס</th><th></th></tr></thead><tbody>
+        <tr><td><b>הסכם שירות</b></td><td>דנה כהן</td><td>היום</td><td><span class="badge sent">נשלח לחתימה</span></td><td><button class="btn btn-ghost btn-sm">תזכורת</button></td></tr>
+        <tr><td><b>טופס הסכמה</b></td><td>יוסי לוי</td><td>אתמול</td><td><span class="badge viewed">נצפה</span></td><td><button class="btn btn-ghost btn-sm">תזכורת</button></td></tr>
+        <tr><td><b>הצעת מחיר 2041</b></td><td>רונית אבני</td><td>לפני 3 ימים</td><td><span class="badge signed">נחתם</span></td><td><button class="btn btn-ghost btn-sm">הורדה</button></td></tr>
+        <tr><td><b>ייפוי כוח</b></td><td>אמיר דוד</td><td>לפני שבוע</td><td><span class="badge declined">נדחה</span></td><td><button class="btn btn-ghost btn-sm">שליחה מחדש</button></td></tr></tbody></table></div>
+    </div>
+  </div>
+
+  <h3 style="margin-block-start:var(--s-10)">2. מסך החותם (מגיע בקישור, בלי התחברות)</h3>
+  <div style="border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden">
+    <header class="topbar"><img class="logo" src="logos/signiv-logo-horizontal-light.svg" alt="signiv"><span class="grow"></span><span class="small muted">הסכם שירות · נשלח על ידי חברת אופק</span></header>
+    <div style="padding:var(--s-8);display:grid;grid-template-columns:1fr 340px;gap:var(--s-8);align-items:start" class="signer">
+      <div class="doc-stage"><div class="doc-page"><div style="font-weight:800;font-size:18px;margin-bottom:10px">הסכם שירות</div><div style="height:7px;background:#e1e7f3;border-radius:4px;margin:9px 0"></div><div style="height:7px;background:#e1e7f3;border-radius:4px;margin:9px 0;width:88%"></div><div style="height:7px;background:#e1e7f3;border-radius:4px;margin:9px 0;width:94%"></div><div style="height:7px;background:#e1e7f3;border-radius:4px;margin:9px 0;width:70%"></div><div class="sig-field" style="inset-inline-start:9%;bottom:9%">&#9998; חתום כאן</div></div></div>
+      <div class="card raised stack"><ol class="steps"><li class="done" data-n="1">קריאה</li><span class="bar done"></span><li class="current" data-n="2">חתימה</li><span class="bar"></span><li data-n="3">סיום</li></ol>
+        <h3>שלום דנה, נשארה חתימה אחת</h3><p class="muted small">צייר את החתימה באצבע או בעכבר. החתימה מחייבת כמו חתימה בעט.</p>
+        <div class="sig-pad"><span class="cap">חתימה</span></div>
+        <label class="check small"><input type="checkbox"> קראתי ואני מסכימה לתנאי המסמך</label>
+        <button class="btn btn-approve btn-lg btn-block">&#10003; אשר וחתום</button><button class="btn btn-ghost btn-block">דחה את המסמך</button></div>
+    </div>
+  </div>
+
+  <h3 style="margin-block-start:var(--s-10)">3. דף נחיתה (hero)</h3>
+  <div style="border-radius:var(--r-xl);overflow:hidden"><div class="hero"><div class="container" style="display:grid;gap:var(--s-5)">
+    <img src="logos/signiv-logo-horizontal-dark.svg" alt="signiv" style="height:44px;justify-self:start">
+    <h1>חותמים על מסמכים <span class="accent">מכל מקום</span>, בלי ניירת</h1>
+    <p>שולחים, חותמים ומקבלים אישור. מהנייד, מהמחשב, בכמה לחיצות.</p>
+    <div class="row"><button class="btn btn-lg btn-approve">התחל בחינם</button><button class="btn btn-lg" style="background:rgba(255,255,255,.14)">איך זה עובד</button></div></div></div></div>
+
+  <h3 style="margin-block-start:var(--s-10)">4. חלון אישור</h3>
+  <div class="overlay" style="position:static;background:var(--brand-50);border-radius:var(--r-xl);padding:var(--s-10)"><div class="modal stack" style="text-align:center">
+    <div style="width:64px;height:64px;border-radius:50%;background:var(--approve-100);color:var(--approve-600);display:grid;place-items:center;font-size:30px;margin:0 auto">&#10003;</div>
+    <h3>המסמך נחתם</h3><p class="muted small">העתק חתום נשלח לשני הצדדים. אפשר להוריד אותו גם מכאן.</p>
+    <button class="btn btn-block">הורדת המסמך החתום</button></div></div>
+</section>
+</main>
+<script>
+const ramps={brand:[50,100,200,300,400,500,600,700,800,900,950],approve:[50,100,200,300,400,500,600,700,800,900,950],n:[0,50,100,200,300,400,500,600,700,800,900]};
+const val={brand:{50:'#eff6ff',100:'#dbeafe',200:'#bfd7fe',300:'#93b8fd',400:'#5f9bf8',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1c3fb5',900:'#172f86',950:'#0f1f4d'},
+approve:{50:'#f0fdf4',100:'#dcfce7',200:'#bbf7d0',400:'#4ade80',500:'#22c55e',600:'#16a34a',700:'#15803d'},
+n:{0:'#ffffff',50:'#f6f8fd',100:'#eef2fa',200:'#e1e7f3',300:'#cbd4e6',400:'#94a1bd',500:'#6a7898',600:'#4d5a78',700:'#364260',800:'#1f2a47',900:'#0f1f4d'}};
+for(const k in val){const el=document.getElementById('r-'+k);for(const s in val[k]){const c=val[k][s];const d=document.createElement('div');d.className='sw';d.style.background=c;d.style.color=(parseInt(s)>=500&&k!=='approve')||(k==='approve'&&parseInt(s)>=600)?'#fff':'#0f1f4d';d.style.boxShadow='inset 0 0 0 1px #0001';d.innerHTML=s+'<br>'+c;el.appendChild(d);}}
+document.querySelectorAll('.signer').forEach(e=>{if(innerWidth<900)e.style.gridTemplateColumns='1fr'});
+</script>
+</body></html>
