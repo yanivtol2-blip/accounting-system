@@ -132,11 +132,12 @@ def lockup(icon, font, wght, dark_bg, pad=24, check_i=False):
     return svg(round(x0 + adv + pad), 120 + 2 * pad, body, defs)
 
 
-for key, name, icon, font, wght, text in OPTIONS:
-    b, defs = icon()
-    with open(f'{OUT}/option-{key}-icon.svg', 'w') as fh:
-        fh.write(svg(120, 120, b, defs))
-    for dark in (True, False):
-        with open(f'{OUT}/option-{key}-logo-{"dark" if dark else "light"}.svg', 'w') as fh:
-            fh.write(lockup(icon, font, wght, dark, check_i=(key == 'd')))
-print('ok')
+if __name__ == '__main__':
+    for key, name, icon, font, wght, text in OPTIONS:
+        b, defs = icon()
+        with open(f'{OUT}/option-{key}-icon.svg', 'w') as fh:
+            fh.write(svg(120, 120, b, defs))
+        for dark in (True, False):
+            with open(f'{OUT}/option-{key}-logo-{"dark" if dark else "light"}.svg', 'w') as fh:
+                fh.write(lockup(icon, font, wght, dark, check_i=(key == 'd')))
+    print('ok')
