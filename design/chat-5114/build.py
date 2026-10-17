@@ -52,6 +52,8 @@ def text_path(font, text, size, x, base, track=0.0, wght=None, nodot_at=None):
                 getattr(tp, op)(*a)
             marks['dot'] = (cx + f['hmtx'][g][0] * s / 2, base - top(contours[1]) * s)
             marks['stem_top'] = base - top(keep) * s
+            xs = [p[0] for op, a in keep for p in a if p is not None]
+            marks['stem_w'] = (max(xs) - min(xs)) * s
         else:
             gs[g].draw(tp)
         d.append(pen.getCommands())
