@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signiv - אנימציית תהליך החתימה לדף הפתיחה (אב טיפוס)</title>
+<style>
+@font-face { font-family: "Heebo"; src: url("../chat-5114/brand/fonts/heebo-hebrew-var.woff2") format("woff2"); font-weight: 100 900; font-display: swap; unicode-range: U+0590-05FF, U+FB1D-FB4F; }
+@font-face { font-family: "Heebo"; src: url("../chat-5114/brand/fonts/heebo-latin-var.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+:root {
+  --brand-50: #eff6ff; --brand-100: #dbeafe; --brand-500: #3b82f6; --brand-600: #2563eb; --brand-700: #1d4ed8; --brand-900: #172f86; --brand-950: #0f1f4d;
+  --approve-50: #f0fdf4; --approve-100: #dcfce7; --approve-500: #22c55e; --approve-600: #16a34a; --approve-700: #15803d;
+  --n-50: #f6f8fd; --n-100: #eef2fa; --n-200: #e1e7f3; --n-300: #cbd4e6; --n-400: #94a1bd; --n-500: #6a7898; --n-600: #4d5a78; --n-900: #0f1f4d;
+  --warning-50: #fffbeb; --warning-500: #f59e0b; --warning-700: #b45309;
+  --shadow-md: 0 4px 14px rgba(15,31,77,.10); --shadow-lg: 0 12px 32px rgba(15,31,77,.14); --shadow-xl: 0 24px 60px rgba(15,31,77,.28);
+  --ease: cubic-bezier(.2,.7,.2,1);
+  --font: "Heebo", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font); color: var(--n-900); background: #fff; -webkit-font-smoothing: antialiased; }
+
+/* hero context, as on signiv.co.il */
+.hero { background: linear-gradient(135deg, #0f1f4d, #172f86); padding: 56px 20px 0; text-align: center; color: #fff; }
+.hero h1 { margin: 0 0 12px; font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; line-height: 1.15; }
+.hero h1 em { font-style: normal; color: #bfd7fe; }
+.hero p { margin: 0 auto 40px; max-width: 620px; color: #c9d5f3; font-size: 1.125rem; line-height: 1.6; }
+.stage { max-width: 1160px; margin: 0 auto; position: relative; top: 0; padding-bottom: 0; }
+.after { height: 80px; }
+
+/* ===== the demo ===== */
+.demo { position: relative; background: #fff; border-radius: 20px 20px 0 0; box-shadow: var(--shadow-xl); overflow: hidden; text-align: start; color: var(--n-900); }
+.demo-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 52px; padding-inline: 20px; border-bottom: 1px solid var(--n-200); font-size: .875rem; color: var(--n-600); }
+.demo-toolbar .ws { display: flex; align-items: center; gap: 8px; }
+.demo-toolbar .ws i { width: 7px; height: 7px; border-radius: 50%; background: var(--brand-600); }
+.demo-file { display: flex; align-items: center; gap: 6px; transition: opacity .3s; }
+.send-btn { height: 34px; padding-inline: 14px; border: 0; border-radius: 10px; background: var(--brand-600); color: #fff; font: 600 .8125rem var(--font); display: inline-flex; align-items: center; gap: 6px; opacity: 0; transform: translateY(4px); transition: opacity .3s, transform .3s var(--ease), background .2s; }
+.send-btn .sent-l { display: none; }
+.demo.f-signer .send-btn { opacity: 1; transform: none; }
+.demo.press-send .send-btn { transform: scale(.94); background: var(--brand-700); }
+.demo.f-sent .send-btn { background: var(--brand-50); color: var(--brand-700); }
+.demo.f-sent .send-btn .send-l { display: none; }
+.demo.f-sent .send-btn .sent-l { display: inline; }
+
+.demo-body { display: grid; grid-template-columns: 60px 1fr 300px; height: 420px; }
+.demo-side { border-inline-end: 1px solid var(--n-200); display: flex; flex-direction: column; align-items: center; gap: 10px; padding-top: 16px; }
+.demo-side .logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, #3b82f6, #1c3fb5); display: grid; place-items: center; margin-bottom: 8px; }
+.demo-side .ic { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; color: var(--n-500); transition: background .3s, color .3s; }
+.demo[data-tab="doc"] .ic[data-k="doc"], .demo[data-tab="pen"] .ic[data-k="pen"], .demo[data-tab="send"] .ic[data-k="send"], .demo[data-tab="clock"] .ic[data-k="clock"] { background: var(--brand-50); color: var(--brand-600); }
+
+.demo-doc { position: relative; background: var(--n-50); display: grid; place-items: center; padding: 22px; overflow: hidden; }
+.dropzone { position: absolute; inset: 22px; border: 2px dashed var(--n-300); border-radius: 16px; display: grid; place-content: center; justify-items: center; gap: 10px; color: var(--n-500); font-size: .9375rem; transition: opacity .35s, border-color .3s, background .3s; }
+.dropzone svg { color: var(--brand-500); }
+.demo.f-fly .dropzone { border-color: var(--brand-500); background: var(--brand-50); }
+.demo.f-paper .dropzone { opacity: 0; }
+.file-chip { position: absolute; top: 50%; inset-inline-start: 50%; display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #fff; border-radius: 12px; box-shadow: var(--shadow-lg); font-weight: 600; font-size: .9375rem; white-space: nowrap; opacity: 0; transform: translate(40%, -260%) rotate(-6deg); pointer-events: none; }
+[dir="rtl"] .file-chip { transform: translate(40%, -260%) rotate(-6deg); }
+.file-chip .pdf { width: 30px; height: 36px; border-radius: 6px; background: #fee2e2; color: #be123c; font-size: .625rem; font-weight: 800; display: grid; place-items: center; }
+.demo.f-fly .file-chip { animation: fly 1s var(--ease) forwards; }
+@keyframes fly { 0% { opacity: 0; transform: translate(40%, -260%) rotate(-6deg); } 25% { opacity: 1; } 80% { transform: translate(50%, -50%) rotate(0); opacity: 1; } 100% { transform: translate(50%, -50%) scale(.96); opacity: 1; } }
+.demo.f-paper .file-chip { animation: none; opacity: 0; transition: opacity .25s; transform: translate(50%, -50%) scale(.9); }
+
+.paper { width: min(100%, 440px); height: 100%; background: #fff; border-radius: 8px; box-shadow: var(--shadow-md); padding: 26px 32px; display: flex; flex-direction: column; opacity: 0; transform: translateY(14px) scale(.98); transition: opacity .45s var(--ease), transform .45s var(--ease); }
+.demo.f-paper .paper { opacity: 1; transform: none; }
+.paper .meta { display: flex; justify-content: space-between; color: var(--n-500); font-size: .75rem; }
+.paper h3 { margin: 14px 0 4px; font-size: 1.375rem; font-weight: 800; }
+.paper .sub { color: var(--n-600); font-size: .8125rem; margin: 0 0 18px; }
+.paper .ln { height: 6px; border-radius: 4px; background: var(--n-100); margin-bottom: 10px; }
+.paper .sec { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--n-200); font-weight: 700; font-size: .875rem; }
+.field-slot { position: relative; height: 82px; margin-top: 10px; border-radius: 10px; }
+.sig-field { position: absolute; inset: 0; border: 1.5px dashed var(--brand-500); background: var(--brand-50); border-radius: 10px; padding: 8px 12px; opacity: 0; transform: scale(.9); transition: opacity .3s, transform .35s var(--ease), border-color .4s, background .4s; }
+.sig-field .lbl { color: var(--brand-600); font-size: .75rem; font-weight: 600; }
+.sig-field .who { position: absolute; inset-block-end: 6px; inset-inline-start: 12px; font-size: .6875rem; color: var(--n-500); }
+.sig-field .ok { position: absolute; inset-block-start: 8px; inset-inline-end: 10px; color: var(--approve-600); opacity: 0; transform: scale(.5); transition: opacity .3s .5s, transform .3s .5s var(--ease); }
+.demo.f-field .sig-field { opacity: 1; transform: none; }
+.demo.f-signed .sig-field { border-style: solid; border-color: var(--approve-500); background: var(--approve-50); }
+.demo.f-signed .sig-field .ok { opacity: 1; transform: none; }
+.sig-field svg.sig { position: absolute; inset-inline: 0; margin-inline: auto; inset-block-start: 14px; width: 190px; height: 52px; color: var(--brand-700); }
+.sig path { stroke-dasharray: 720; stroke-dashoffset: 720; }
+.demo.f-signed .sig-field .sig path { transition: stroke-dashoffset 1s ease-in-out .15s; stroke-dashoffset: 0; }
+.paper .foot { display: flex; justify-content: space-between; color: var(--n-500); font-size: .6875rem; margin-top: 6px; }
+
+/* activity panel */
+.demo-act { border-inline-start: 1px solid var(--n-200); padding: 20px; display: flex; flex-direction: column; gap: 14px; font-size: .875rem; }
+.act-head { display: flex; flex-direction: column; gap: 10px; }
+.act-head b { font-size: .9375rem; }
+.pill { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding-inline: 12px; border-radius: 999px; font-size: .8125rem; font-weight: 600; background: var(--n-100); color: var(--n-600); transition: background .35s, color .35s; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill[data-s="sent"] { background: var(--brand-50); color: var(--brand-700); }
+.pill[data-s="viewed"] { background: var(--warning-50); color: var(--warning-700); }
+.pill[data-s="signed"] { background: var(--approve-100); color: var(--approve-700); }
+.demo.pill-pop .pill { animation: pop .4s var(--ease); }
+@keyframes pop { 50% { transform: scale(1.1); } }
+
+.signer { display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--n-200); border-radius: 12px; opacity: 0; transform: translateY(6px); transition: opacity .35s, transform .35s var(--ease); }
+.signer .av { width: 32px; height: 32px; border-radius: 50%; background: var(--brand-100); color: var(--brand-700); display: grid; place-items: center; font-weight: 700; font-size: .8125rem; flex: none; }
+.signer small { display: block; color: var(--n-500); font-size: .75rem; }
+.tool { margin-inline-start: auto; display: inline-flex; align-items: center; gap: 5px; height: 30px; padding-inline: 10px; border-radius: 8px; border: 1.5px dashed var(--brand-500); background: var(--brand-50); color: var(--brand-700); font-size: .75rem; font-weight: 600; white-space: nowrap; }
+.demo.f-signer .signer { opacity: 1; transform: none; }
+
+.events { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.ev { display: flex; gap: 12px; align-items: flex-start; opacity: .38; transition: opacity .4s; }
+.ev .dot { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--n-100); color: var(--n-500); flex: none; transition: background .4s, color .4s; }
+.ev b { display: block; font-size: .875rem; }
+.ev small { color: var(--n-500); font-size: .75rem; }
+.ev time { margin-inline-start: auto; color: var(--n-400); font-size: .75rem; opacity: 0; transition: opacity .4s; }
+.demo.f-sent .ev[data-e="sent"], .demo.f-viewed .ev[data-e="viewed"], .demo.f-signed .ev[data-e="signed"] { opacity: 1; }
+.demo.f-sent .ev[data-e="sent"] .dot, .demo.f-viewed .ev[data-e="viewed"] .dot { background: var(--brand-50); color: var(--brand-600); }
+.demo.f-signed .ev[data-e="signed"] .dot { background: var(--approve-100); color: var(--approve-600); }
+.demo.f-sent .ev[data-e="sent"] time, .demo.f-viewed .ev[data-e="viewed"] time, .demo.f-signed .ev[data-e="signed"] time { opacity: 1; }
+
+/* ghost of the dragged field, and the cursor: placed by JS from element rects */
+.ghost, .cursor { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 20; }
+.ghost { width: 120px; height: 34px; border-radius: 8px; border: 1.5px dashed var(--brand-500); background: rgba(239,246,255,.95); color: var(--brand-700); font-size: .75rem; font-weight: 600; display: grid; place-items: center; box-shadow: var(--shadow-lg); opacity: 0; }
+.cursor { width: 26px; height: 26px; opacity: 0; transition: transform .75s var(--ease), opacity .25s; filter: drop-shadow(0 2px 3px rgba(15,31,77,.35)); }
+.cursor.press svg { transform: scale(.82); }
+.cursor svg { transition: transform .12s; transform-origin: 4px 3px; }
+
+/* phone */
+.phone { position: absolute; z-index: 15; inset-inline-end: 36px; inset-block-end: -20px; width: 210px; height: 400px; border-radius: 34px; background: #0f1f4d; padding: 9px; box-shadow: var(--shadow-xl); transform: translateY(110%); transition: transform .7s var(--ease); }
+.demo.f-phone .phone { transform: translateY(0); }
+.demo.f-phone-out .phone { transform: translateY(115%); }
+.screen { position: relative; height: 100%; border-radius: 26px; background: var(--n-50); overflow: hidden; }
+.notch { position: absolute; top: 7px; inset-inline: 0; margin-inline: auto; width: 64px; height: 18px; border-radius: 12px; background: #0f1f4d; z-index: 3; }
+.scr { position: absolute; inset: 0; padding: 34px 12px 14px; display: flex; flex-direction: column; opacity: 0; transition: opacity .35s; }
+.phone[data-scr="lock"] .scr-lock, .phone[data-scr="sign"] .scr-sign, .phone[data-scr="done"] .scr-done { opacity: 1; }
+.scr-lock { background: linear-gradient(160deg, #172f86, #3b82f6); color: #fff; align-items: center; }
+.scr-lock .clock { font-size: 2.6rem; font-weight: 300; margin-top: 18px; line-height: 1; }
+.scr-lock .date { font-size: .75rem; opacity: .85; margin-bottom: 26px; }
+.notif { width: 100%; background: rgba(255,255,255,.92); color: var(--n-900); border-radius: 16px; padding: 10px 12px; font-size: .75rem; line-height: 1.45; transform: translateY(-14px) scale(.96); opacity: 0; transition: transform .45s var(--ease), opacity .3s; }
+.phone.notif-in .notif { transform: none; opacity: 1; }
+.notif .top { display: flex; align-items: center; gap: 6px; font-size: .6875rem; color: var(--n-500); margin-bottom: 3px; }
+.notif .top i { width: 16px; height: 16px; border-radius: 5px; background: var(--approve-500); display: grid; place-items: center; }
+.notif u { color: var(--brand-600); text-decoration: none; font-weight: 600; }
+.scr-sign { background: #fff; gap: 8px; }
+.scr-sign .brand { display: flex; align-items: center; justify-content: space-between; font-size: .6875rem; color: var(--n-500); }
+.scr-sign h4 { margin: 2px 0 0; font-size: .9375rem; }
+.scr-sign .mini .ln { height: 5px; border-radius: 3px; background: var(--n-100); margin-bottom: 6px; }
+.pad { position: relative; flex: 1; min-height: 110px; border: 1.5px dashed var(--brand-500); border-radius: 12px; background: var(--brand-50); }
+.pad span { position: absolute; top: 6px; inset-inline-start: 10px; font-size: .6875rem; color: var(--brand-600); font-weight: 600; }
+.pad svg { position: absolute; inset: 22px 6px 6px; width: calc(100% - 12px); height: calc(100% - 28px); color: var(--n-900); }
+.pad path { stroke-dasharray: 720; stroke-dashoffset: 720; }
+.phone.drawing .pad path { transition: stroke-dashoffset 1.5s ease-in-out; stroke-dashoffset: 0; }
+.approve { height: 44px; border: 0; border-radius: 12px; background: var(--approve-500); color: #fff; font: 700 .875rem var(--font); display: flex; align-items: center; justify-content: center; gap: 6px; transition: transform .12s, background .2s; }
+.phone.press-ok .approve { transform: scale(.95); background: var(--approve-600); }
+.scr-done { background: #fff; align-items: center; justify-content: center; text-align: center; gap: 10px; }
+.scr-done .big { width: 64px; height: 64px; border-radius: 50%; background: var(--approve-100); color: var(--approve-600); display: grid; place-items: center; transform: scale(.4); transition: transform .5s var(--ease); }
+.phone[data-scr="done"] .big { transform: none; }
+.scr-done b { font-size: 1rem; }
+.scr-done small { color: var(--n-500); font-size: .75rem; padding-inline: 10px; }
+
+/* toast */
+.toast { position: absolute; z-index: 16; inset-block-start: 66px; inset-inline-start: 50%; transform: translate(50%, -12px); display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 12px; background: var(--brand-950); color: #fff; font-size: .8125rem; box-shadow: var(--shadow-lg); opacity: 0; transition: opacity .35s, transform .35s var(--ease); white-space: nowrap; }
+.toast svg { color: var(--approve-500); }
+.demo.f-toast .toast { opacity: 1; transform: translate(50%, 0); }
+
+/* steps strip */
+.steps { display: flex; align-items: center; gap: 6px; padding: 14px 20px; border-top: 1px solid var(--n-200); background: #fff; }
+.steps ol { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; flex: 1; }
+.st { flex: 1; display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; color: var(--n-500); font-size: .8125rem; font-weight: 500; transition: background .3s, color .3s; }
+.st .n { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--n-300); display: grid; place-items: center; font-size: .6875rem; font-weight: 700; flex: none; transition: all .3s; }
+.st.on { background: var(--brand-50); color: var(--brand-700); font-weight: 700; }
+.st.on .n { border-color: var(--brand-600); background: var(--brand-600); color: #fff; }
+.st.done .n { border-color: var(--brand-600); color: var(--brand-600); }
+.st.done.fin, .st.on.fin { background: var(--approve-50); color: var(--approve-700); }
+.st.done.fin .n, .st.on.fin .n { border-color: var(--approve-600); background: var(--approve-600); color: #fff; }
+.pause { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--n-200); background: #fff; color: var(--n-600); display: grid; place-items: center; cursor: pointer; flex: none; }
+.pause:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(59,130,246,.3); }
+.pause .play { display: none; }
+.demo.paused .pause .play { display: block; }
+.demo.paused .pause .pz { display: none; }
+.cap { color: var(--n-500); font-size: .75rem; text-align: center; padding: 10px 0 0; }
+
+.demo.fade-out .demo-body > *, .demo.fade-out .toast { transition: opacity .4s; opacity: 0 !important; }
+
+/* tablet and phone */
+@media (max-width: 900px) {
+  .demo-body { grid-template-columns: 1fr 260px; }
+  .demo-side { display: none; }
+}
+@media (max-width: 680px) {
+  .hero { padding-top: 40px; }
+  .demo-toolbar .ws { display: none; }
+  .demo-body { grid-template-columns: 1fr; grid-template-rows: 360px auto; height: auto; }
+  .demo-doc { padding: 14px; }
+  .dropzone { inset: 14px; }
+  .paper { padding: 18px 20px; }
+  .paper .ln:nth-of-type(n+4) { display: none; }
+  .demo-act { border-inline-start: 0; border-top: 1px solid var(--n-200); padding: 14px; gap: 10px; }
+  .act-head { flex-direction: row; align-items: center; justify-content: space-between; }
+  .events { flex-direction: row; gap: 6px; }
+  .ev { flex: 1; flex-direction: column; align-items: center; text-align: center; gap: 4px; }
+  .ev small, .ev time { display: none; }
+  .ev b { font-size: .6875rem; }
+  .phone { inset-inline-end: 50%; transform: translate(-50%, 110%); width: 172px; height: 328px; inset-block-end: auto; top: 16px; }
+  [dir="rtl"] .phone { transform: translate(-50%, 130%); }
+  .demo.f-phone .phone { transform: translate(-50%, 0); }
+  .demo.f-phone-out .phone { transform: translate(-50%, 130%); }
+  .steps { padding: 10px; }
+  .st { padding: 6px; justify-content: center; }
+  .st .t { display: none; }
+  .st.on .t { display: inline; }
+  .st.on { flex: 3; }
+}
+
+/* no motion: the finished state, still */
+@media (prefers-reduced-motion: reduce) {
+  .demo *, .demo *::before { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<section class="hero">
+  <h1>חתימה דיגיטלית על מסמכים,<br><em>מכל מקום</em></h1>
+  <p>שולחים מסמך לחתימה, והלקוחות חותמים מהנייד בדקה, בלי להדפיס ובלי להתקין כלום.</p>
+
+  <div class="stage">
+    <div class="demo" id="demo" data-tab="doc" role="img" aria-label="הדגמה: מעלים מסמך, מגדירים חותם ושדה חתימה, שולחים, והלקוח חותם מהנייד והמסמך מסומן כנחתם">
+      <div class="demo-toolbar" aria-hidden="true">
+        <span class="ws"><i></i>סביבת העבודה שלכם</span>
+        <span class="demo-file"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg><span id="fname">מסמך חדש</span></span>
+        <button class="send-btn" id="sendBtn" tabindex="-1"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg><span class="send-l">שליחה לחתימה</span><span class="sent-l">נשלח</span></button>
+      </div>
+
+      <div class="demo-body" aria-hidden="true">
+        <aside class="demo-side">
+          <span class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+          <span class="ic" data-k="doc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h8M8 17h8"/></svg></span>
+          <span class="ic" data-k="pen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+          <span class="ic" data-k="clock"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+          <span class="ic" data-k="send"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></span>
+        </aside>
+
+        <div class="demo-doc" id="docArea">
+          <div class="dropzone">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>
+            <span>גררו לכאן מסמך PDF או Word</span>
+          </div>
+          <div class="file-chip"><span class="pdf">PDF</span>הסכם שירות.pdf</div>
+
+          <div class="paper">
+            <div class="meta"><span>מסמך לדוגמה</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg></div>
+            <h3>הסכם שירות</h3>
+            <p class="sub">פרטי ההתקשרות ואישור המסמך</p>
+            <div class="ln" style="width:100%"></div>
+            <div class="ln" style="width:88%"></div>
+            <div class="ln" style="width:96%"></div>
+            <div class="ln" style="width:70%"></div>
+            <div class="sec">אישור וחתימה</div>
+            <div class="field-slot" id="slot">
+              <div class="sig-field">
+                <span class="lbl">חתום כאן</span>
+                <svg class="sig" viewBox="0 0 240 65"><path d="M18 47C53 3 12 69 63 31S62 69 83 41 113 17 106 41 107 56 123 38 131 19 135 43 163 56 180 24M43 54c47 12 88-1 155-5M156 46c17-1 35-4 63-17" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg>
+                <span class="who">דנה לוי</span>
+                <svg class="ok" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              </div>
+            </div>
+            <div class="foot"><span>חתימת הלקוח</span><span>Signiv</span></div>
+          </div>
+
+          <div class="phone" id="phone" data-scr="lock">
+            <div class="screen">
+              <span class="notch"></span>
+              <div class="scr scr-lock">
+                <div class="clock">10:42</div>
+                <div class="date">יום שלישי</div>
+                <div class="notif">
+                  <div class="top"><i><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></i>הודעות · עכשיו</div>
+                  <b>Signiv</b><br>שלום דנה, נשלח אליך מסמך לחתימה: הסכם שירות. <u>לחתימה</u>
+                </div>
+              </div>
+              <div class="scr scr-sign">
+                <div class="brand"><span>Signiv</span><span>מסמך לחתימה</span></div>
+                <h4>הסכם שירות</h4>
+                <div class="mini"><div class="ln" style="width:100%"></div><div class="ln" style="width:80%"></div><div class="ln" style="width:92%"></div></div>
+                <div class="pad"><span>חתמו כאן באצבע</span><svg viewBox="0 0 240 65"><path d="M18 47C53 3 12 69 63 31S62 69 83 41 113 17 106 41 107 56 123 38 131 19 135 43 163 56 180 24M43 54c47 12 88-1 155-5M156 46c17-1 35-4 63-17" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg></div>
+                <button class="approve" tabindex="-1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>אשר וחתום</button>
+              </div>
+              <div class="scr scr-done">
+                <div class="big"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+                <b>המסמך נחתם</b>
+                <small>עותק חתום נשלח אליך במייל</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-act">
+          <div class="act-head"><b>כל התהליך, במקום אחד</b><span class="pill" id="pill" data-s="draft">טיוטה</span></div>
+          <div class="signer">
+            <span class="av">דל</span>
+            <div><b>דנה לוי</b><small>חותמת · SMS</small></div>
+            <span class="tool" id="tool"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>שדה חתימה</span>
+          </div>
+          <ul class="events">
+            <li class="ev" data-e="sent"><span class="dot"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></span><div><b>המסמך נשלח</b><small>קישור לחתימה ב-SMS</small></div><time>10:42</time></li>
+            <li class="ev" data-e="viewed"><span class="dot"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span><div><b>המסמך נצפה</b><small>הלקוחה פתחה את המסמך</small></div><time>10:43</time></li>
+            <li class="ev" data-e="signed"><span class="dot"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>החתימה הושלמה</b><small>המסמך החתום נשמר</small></div><time>10:44</time></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="toast" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>דנה לוי חתמה על הסכם שירות</div>
+      <div class="ghost" id="ghost">חתום כאן</div>
+      <div class="cursor" id="cursor"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M4 3l15 7.2-6.4 1.6L9.6 18Z" fill="#fff" stroke="#0f1f4d" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+
+      <div class="steps">
+        <ol id="steps" aria-hidden="true">
+          <li class="st" data-i="1"><span class="n">1</span><span class="t">מעלים מסמך</span></li>
+          <li class="st" data-i="2"><span class="n">2</span><span class="t">מגדירים מי חותם ואיפה</span></li>
+          <li class="st" data-i="3"><span class="n">3</span><span class="t">שולחים ב-SMS או במייל</span></li>
+          <li class="st fin" data-i="4"><span class="n">4</span><span class="t">הלקוח חותם מהנייד</span></li>
+        </ol>
+        <button class="pause" id="pause" type="button" aria-label="עצירת ההדגמה" aria-pressed="false">
+          <svg class="pz" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+          <svg class="play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 5v14L7 12Z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<p class="cap">תצוגה להמחשה</p>
+<div class="after"></div>
+
+<script>
+(() => {
+  const demo = document.getElementById('demo');
+  const phone = document.getElementById('phone');
+  const pill = document.getElementById('pill');
+  const cursor = document.getElementById('cursor');
+  const ghost = document.getElementById('ghost');
+  const fname = document.getElementById('fname');
+  const pauseBtn = document.getElementById('pause');
+  const steps = [...document.querySelectorAll('.st')];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const FLAGS = ['f-fly','f-paper','f-signer','f-field','f-sent','f-phone','f-phone-out','f-viewed','f-signed','f-toast','press-send','pill-pop','fade-out'];
+  const PILL = { draft: 'טיוטה', sent: 'נשלח לחתימה', viewed: 'נצפה', signed: 'נחתם' };
+
+  let run = 0, paused = false, visible = true;
+  const wait = (ms, id) => new Promise((res, rej) => setTimeout(() => (id === run ? res() : rej('stop')), ms));
+  const on = (...f) => demo.classList.add(...f);
+  const off = (...f) => demo.classList.remove(...f);
+  const step = (i) => steps.forEach((s, k) => { s.classList.toggle('on', k + 1 === i); s.classList.toggle('done', k + 1 < i); });
+  const status = (s) => { pill.dataset.s = s; pill.textContent = PILL[s]; off('pill-pop'); void pill.offsetWidth; on('pill-pop'); };
+
+  // position relative to the demo box, from the target's real rect
+  const at = (el, dx = .5, dy = .5) => { const d = demo.getBoundingClientRect(), r = el.getBoundingClientRect(); return [r.left - d.left + r.width * dx, r.top - d.top + r.height * dy]; };
+  const moveCursor = ([x, y]) => { cursor.style.transform = `translate(${x - 4}px, ${y - 3}px)`; };
+
+  function reset() {
+    off(...FLAGS);
+    demo.dataset.tab = 'doc';
+    phone.dataset.scr = 'lock';
+    phone.classList.remove('notif-in', 'drawing', 'press-ok');
+    status('draft'); off('pill-pop');
+    fname.textContent = 'מסמך חדש';
+    cursor.style.opacity = 0; cursor.classList.remove('press');
+    ghost.style.opacity = 0;
+    step(1);
+  }
+
+  function finalState() {
+    reset();
+    on('f-paper', 'f-signer', 'f-field', 'f-sent', 'f-viewed', 'f-signed');
+    fname.textContent = 'הסכם שירות.pdf';
+    status('signed'); off('pill-pop');
+    demo.dataset.tab = 'clock';
+    steps.forEach(s => s.classList.add('done'));
+  }
+
+  async function loop(id) {
+    for (;;) {
+      reset();
+      await wait(700, id);
+      // 1. upload
+      on('f-fly');
+      await wait(1000, id);
+      on('f-paper'); fname.textContent = 'הסכם שירות.pdf';
+      await wait(1300, id);
+      // 2. who signs and where
+      step(2); demo.dataset.tab = 'pen'; on('f-signer');
+      await wait(700, id);
+      const tool = document.getElementById('tool'), slot = document.getElementById('slot');
+      cursor.style.transition = 'none'; moveCursor(at(tool, .5, 1.6)); void cursor.offsetWidth; cursor.style.transition = '';
+      cursor.style.opacity = 1;
+      await wait(150, id);
+      moveCursor(at(tool, .5, .55));
+      await wait(800, id);
+      cursor.classList.add('press');
+      const [gx, gy] = at(tool), [tx, ty] = at(slot);
+      ghost.style.opacity = 1;
+      const g = ghost.animate([
+        { transform: `translate(${gx - 60}px, ${gy - 17}px) scale(.9)` },
+        { transform: `translate(${tx - 60}px, ${ty - 17}px) scale(1.15)` }
+      ], { duration: 950, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'forwards' });
+      moveCursor([tx + 12, ty + 4]);
+      cursor.style.transitionDuration = '.95s';
+      await wait(1000, id);
+      cursor.style.transitionDuration = '';
+      cursor.classList.remove('press');
+      ghost.style.opacity = 0; g.cancel();
+      on('f-field');
+      await wait(900, id);
+      // 3. send
+      step(3); demo.dataset.tab = 'send';
+      moveCursor(at(document.getElementById('sendBtn'), .6, .6));
+      await wait(850, id);
+      cursor.classList.add('press'); on('press-send');
+      await wait(180, id);
+      cursor.classList.remove('press'); off('press-send');
+      on('f-sent'); status('sent');
+      await wait(500, id);
+      cursor.style.opacity = 0;
+      on('f-phone');
+      await wait(700, id);
+      phone.classList.add('notif-in');
+      await wait(1300, id);
+      // 4. the client signs on the phone
+      step(4);
+      phone.dataset.scr = 'sign'; on('f-viewed'); status('viewed');
+      await wait(700, id);
+      phone.classList.add('drawing');
+      await wait(1700, id);
+      phone.classList.add('press-ok');
+      await wait(220, id);
+      phone.classList.remove('press-ok');
+      phone.dataset.scr = 'done';
+      await wait(1300, id);
+      on('f-phone-out');
+      await wait(450, id);
+      on('f-signed'); status('signed'); demo.dataset.tab = 'clock';
+      await wait(500, id);
+      on('f-toast');
+      steps[3].classList.add('done');
+      await wait(3200, id);
+      on('fade-out');
+      await wait(450, id);
+    }
+  }
+
+  function start() { if (paused || !visible || reduce) return; run++; loop(run).catch(() => {}); }
+  function stop() { run++; }
+
+  pauseBtn.addEventListener('click', () => {
+    paused = !paused;
+    demo.classList.toggle('paused', paused);
+    pauseBtn.setAttribute('aria-pressed', paused);
+    pauseBtn.setAttribute('aria-label', paused ? 'הפעלת ההדגמה' : 'עצירת ההדגמה');
+    if (paused) { stop(); finalState(); } else start();
+  });
+  // play only while on screen and the tab is visible
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; visible ? start() : stop(); }, { threshold: .25 }).observe(demo);
+  document.addEventListener('visibilitychange', () => { visible = !document.hidden; visible ? start() : stop(); });
+
+  if (reduce) finalState(); else start();
+})();
+</script>
+</body>
+</html>
