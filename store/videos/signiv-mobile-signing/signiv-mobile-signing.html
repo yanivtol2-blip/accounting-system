@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:,">
+<title>Signiv - חותמים מהנייד (סרטון הסבר, 45 שניות)</title>
+<style>
+@font-face { font-family: "Heebo"; src: url("../_tools/fonts/heebo-hebrew-var.woff2") format("woff2"); font-weight: 100 900; unicode-range: U+0590-05FF, U+FB1D-FB4F; }
+@font-face { font-family: "Heebo"; src: url("../_tools/fonts/heebo-latin-var.woff2") format("woff2"); font-weight: 100 900; }
+:root {
+  --brand-50: #eff6ff; --brand-100: #dbeafe; --brand-200: #bfd7fe; --brand-500: #3b82f6; --brand-600: #2563eb; --brand-700: #1d4ed8; --brand-900: #172f86; --brand-950: #0f1f4d;
+  --approve-50: #f0fdf4; --approve-100: #dcfce7; --approve-500: #22c55e; --approve-600: #16a34a; --approve-700: #15803d;
+  --n-50: #f6f8fd; --n-100: #eef2fa; --n-200: #e1e7f3; --n-300: #cbd4e6; --n-400: #94a1bd; --n-500: #6a7898; --n-600: #4d5a78; --n-900: #0f1f4d;
+  --shadow-lg: 0 12px 32px rgba(15,31,77,.14); --shadow-xl: 0 40px 90px rgba(4,10,35,.55);
+  --font: "Heebo", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+body { font-family: var(--font); color: #fff; background: #0f1f4d; -webkit-font-smoothing: antialiased; }
+.num { direction: ltr; unicode-bidi: isolate; }
+
+#stage { position: relative; width: 100%; height: 100%; overflow: hidden; background: linear-gradient(135deg, #0f1f4d, #172f86); }
+.glow { position: absolute; border-radius: 50%; pointer-events: none; filter: blur(10px); }
+.glow.a { width: 1300px; height: 1300px; background: radial-gradient(closest-side, rgba(59,130,246,.42), rgba(59,130,246,0)); }
+.glow.b { width: 1000px; height: 1000px; background: radial-gradient(closest-side, rgba(191,215,254,.16), rgba(191,215,254,0)); }
+
+/* ===== captions ===== */
+.caps { position: absolute; display: grid; }
+.cap { grid-area: 1 / 1; align-self: center; opacity: 0; }
+.cap .l1, .cap .l2 { display: block; font-weight: 800; line-height: 1.12; white-space: nowrap; letter-spacing: -.01em; }
+.cap .l2 { color: var(--brand-200); }
+.cap .l2.ok { color: #86efac; }
+.v .caps { inset-inline: 60px; inset-block-start: 210px; height: 360px; text-align: center; }
+.v .cap .l1, .v .cap .l2 { font-size: 92px; }
+.h .caps { inset-inline-start: 130px; inset-block: 0; width: 820px; text-align: start; }
+.h .cap .l1, .h .cap .l2 { font-size: 84px; }
+
+/* ===== hook signature ===== */
+.hooksig { position: absolute; opacity: 0; }
+.hooksig path { fill: none; stroke: var(--brand-200); stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+.v .hooksig { inset-inline: 0; margin-inline: auto; inset-block-start: 860px; width: 860px; }
+.h .hooksig { inset-inline-end: 110px; inset-block-start: 420px; width: 820px; }
+
+/* ===== the sender's screen (a desktop window) ===== */
+.desk { position: absolute; width: 760px; height: 500px; border-radius: 22px; background: #fff; color: var(--n-900); box-shadow: var(--shadow-xl); overflow: hidden; transform-origin: 50% 50%; opacity: 0; }
+.v .desk { inset-inline: 0; margin-inline: auto; inset-block-start: 820px; }
+.h .desk { inset-inline-end: 120px; inset-block-start: 290px; }
+.desk-bar { height: 46px; display: flex; align-items: center; gap: 8px; padding-inline: 18px; background: var(--n-50); border-block-end: 1px solid var(--n-200); font-size: 15px; color: var(--n-500); }
+.desk-bar i { width: 11px; height: 11px; border-radius: 50%; background: var(--n-300); }
+.desk-bar b { margin-inline-start: 10px; font-weight: 600; color: var(--n-600); }
+.desk-body { padding: 26px 30px; display: flex; flex-direction: column; gap: 18px; }
+.desk-body h5 { margin: 0; font-size: 22px; font-weight: 800; }
+.drop { position: relative; height: 150px; border: 2px dashed var(--n-300); border-radius: 16px; display: grid; place-items: center; color: var(--n-500); font-size: 17px; }
+.drop .hint { display: flex; align-items: center; gap: 10px; }
+.drop .hint svg { color: var(--brand-500); }
+.filecard { position: absolute; inset: 14px; border-radius: 12px; background: #fff; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 16px; padding-inline: 20px; opacity: 0; }
+.pdf { width: 46px; height: 56px; border-radius: 8px; background: #fee2e2; color: #be123c; font-size: 13px; font-weight: 800; display: grid; place-items: center; flex: none; }
+.filecard b { font-size: 20px; }
+.filecard small { display: block; color: var(--n-500); font-size: 14px; margin-block-start: 2px; }
+.signer { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border: 1px solid var(--n-200); border-radius: 14px; opacity: 0; }
+.av { width: 44px; height: 44px; border-radius: 50%; background: var(--brand-100); color: var(--brand-700); display: grid; place-items: center; font-weight: 700; font-size: 16px; flex: none; }
+.signer b { font-size: 18px; }
+.signer small { display: block; color: var(--n-500); font-size: 14px; }
+.chan { margin-inline-start: auto; display: inline-flex; align-items: center; gap: 6px; height: 32px; padding-inline: 12px; border-radius: 999px; background: var(--brand-50); color: var(--brand-700); font-size: 14px; font-weight: 700; }
+.sendrow { display: flex; justify-content: flex-end; }
+.sendbtn { position: relative; height: 54px; padding-inline: 26px; border-radius: 12px; background: var(--brand-600); color: #fff; font-size: 18px; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; }
+.sendbtn .sent { display: none; }
+.desk.is-sent .sendbtn { background: var(--brand-50); color: var(--brand-700); }
+.desk.is-sent .sendbtn .send { display: none; }
+.desk.is-sent .sendbtn .sent { display: inline-flex; align-items: center; gap: 10px; }
+.cursor { position: absolute; top: 0; left: 0; width: 34px; height: 34px; opacity: 0; filter: drop-shadow(0 2px 3px rgba(15,31,77,.35)); z-index: 5; }
+
+/* ===== the phone (logical 390x800, scaled) ===== */
+.phone { position: absolute; width: 390px; height: 800px; border-radius: 60px; background: #0a1433; padding: 12px; box-shadow: var(--shadow-xl), inset 0 0 0 2px #24345f; transform-origin: 50% 0; }
+.v .phone { inset-inline: 0; margin-inline: auto; inset-block-start: 610px; }
+.h .phone { inset-inline-end: 365px; inset-block-start: 92px; }
+.screen { position: relative; width: 100%; height: 100%; border-radius: 48px; overflow: hidden; background: #fff; color: var(--n-900); }
+.island { position: absolute; z-index: 9; inset-block-start: 11px; inset-inline: 0; margin-inline: auto; width: 112px; height: 32px; border-radius: 18px; background: #0a1433; }
+.sbar { direction: ltr; position: absolute; z-index: 8; inset-block-start: 0; inset-inline: 0; height: 52px; display: flex; align-items: center; justify-content: space-between; padding-inline: 34px; font-size: 15px; font-weight: 600; }
+.sbar .ic { display: flex; gap: 5px; align-items: center; }
+.scr { position: absolute; inset: 0; opacity: 0; }
+
+/* lock screen */
+.lock { background: linear-gradient(165deg, #172f86 0%, #2563eb 70%, #3b82f6 100%); color: #fff; display: flex; flex-direction: column; align-items: center; }
+.lock .clock { margin-block-start: 96px; font-size: 92px; font-weight: 300; line-height: 1; letter-spacing: -.02em; }
+.lock .date { margin-block-start: 8px; font-size: 19px; opacity: .88; }
+.notif { position: absolute; inset-inline: 14px; inset-block-start: 268px; background: rgba(255,255,255,.95); color: var(--n-900); border-radius: 24px; padding: 14px 16px 16px; font-size: 16px; line-height: 1.45; box-shadow: 0 10px 30px rgba(4,10,35,.25); opacity: 0; }
+.notif .top { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--n-500); margin-block-end: 4px; }
+.notif .top i { width: 22px; height: 22px; border-radius: 7px; background: var(--brand-600); display: grid; place-items: center; }
+.notif .top time { margin-inline-start: auto; }
+.notif b { font-size: 16px; }
+.notif .link { color: var(--brand-600); font-weight: 600; }
+
+/* the document in the browser */
+.doc { background: var(--n-50); }
+.urlbar { position: absolute; z-index: 4; inset-block-start: 52px; inset-inline: 0; height: 50px; background: var(--n-50); display: grid; place-items: center; border-block-end: 1px solid var(--n-200); }
+.urlbar span { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding-inline: 18px; border-radius: 12px; background: #e6ebf5; color: var(--n-600); font-size: 14px; }
+.doc .sbar { background: var(--n-50); }
+.viewport { position: absolute; inset-block: 102px 104px; inset-inline: 0; overflow: hidden; }
+.scroll { position: absolute; inset-inline: 0; inset-block-start: 0; padding: 16px 16px 30px; }
+.apphead { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--n-500); margin-block-end: 12px; }
+.apphead img { width: 30px; height: 30px; }
+.apphead b { color: var(--n-900); font-size: 16px; }
+.apphead .st { margin-inline-start: auto; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding-inline: 12px; border-radius: 999px; background: var(--brand-50); color: var(--brand-700); font-size: 13px; font-weight: 600; }
+.apphead .st::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.paper { background: #fff; border-radius: 16px; box-shadow: 0 2px 10px rgba(15,31,77,.07); padding: 22px 20px; }
+.paper h4 { margin: 0; font-size: 26px; font-weight: 800; }
+.paper .sub { margin: 4px 0 14px; color: var(--n-500); font-size: 14px; }
+.paper h6 { margin: 18px 0 10px; font-size: 16px; font-weight: 700; }
+.ln { height: 8px; border-radius: 5px; background: var(--n-100); margin-block-end: 10px; }
+.field { position: relative; height: 150px; margin-block-start: 12px; border: 2px dashed var(--brand-500); border-radius: 14px; background: var(--brand-50); }
+.field .lbl { position: absolute; inset-block-start: 10px; inset-inline-start: 14px; color: var(--brand-600); font-size: 15px; font-weight: 700; }
+.field .who { position: absolute; inset-block-end: 8px; inset-inline-start: 14px; color: var(--n-500); font-size: 13px; }
+.field svg.sig { position: absolute; inset-inline: 0; margin-inline: auto; inset-block-start: 30px; width: 300px; height: 82px; overflow: visible; }
+.field svg.sig path { fill: none; stroke: var(--brand-950); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.field.signed { border-style: solid; border-color: var(--approve-500); background: var(--approve-50); }
+.field .okv { position: absolute; inset-block-start: 10px; inset-inline-end: 12px; color: var(--approve-600); opacity: 0; }
+.bottombar { position: absolute; z-index: 4; inset-block-end: 0; inset-inline: 0; height: 104px; background: #fff; border-block-start: 1px solid var(--n-200); padding: 16px 16px 30px; }
+.approve { height: 58px; border-radius: 14px; background: var(--n-200); color: var(--n-500); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 19px; font-weight: 700; }
+.approve.on { background: var(--approve-500); color: #fff; }
+.approve.press { background: var(--approve-600); }
+
+/* signed */
+.done { background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-inline: 26px; }
+.done .big { width: 128px; height: 128px; border-radius: 50%; background: var(--approve-100); color: var(--approve-600); display: grid; place-items: center; }
+.done h4 { margin: 26px 0 8px; font-size: 32px; font-weight: 800; }
+.done p { margin: 0; color: var(--n-600); font-size: 18px; line-height: 1.5; }
+.done .rec { margin-block-start: 30px; align-self: stretch; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid var(--n-200); border-radius: 16px; text-align: start; }
+.done .rec b { font-size: 16px; display: block; }
+.done .rec small { color: var(--n-500); font-size: 13px; }
+.done .rec .pill { margin-inline-start: auto; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding-inline: 12px; border-radius: 999px; background: var(--approve-100); color: var(--approve-700); font-size: 13px; font-weight: 700; }
+.done .rec .pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.mail { position: absolute; z-index: 7; inset-inline: 14px; inset-block-start: 56px; background: rgba(255,255,255,.97); border-radius: 22px; padding: 12px 14px; display: flex; gap: 12px; align-items: center; box-shadow: 0 10px 30px rgba(4,10,35,.22); border: 1px solid var(--n-200); opacity: 0; }
+.mail i { width: 40px; height: 40px; border-radius: 11px; background: var(--brand-600); display: grid; place-items: center; flex: none; }
+.mail b { display: block; font-size: 15px; }
+.mail small { color: var(--n-500); font-size: 13px; }
+
+/* the finger */
+.touch { position: absolute; z-index: 20; top: 0; left: 0; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: rgba(15,31,77,.18); border: 3px solid rgba(15,31,77,.45); opacity: 0; }
+.ripple { position: absolute; z-index: 19; top: 0; left: 0; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; border: 3px solid rgba(37,99,235,.7); opacity: 0; }
+
+/* ===== recap ===== */
+.recap { position: absolute; display: flex; flex-direction: column; gap: 30px; }
+.v .recap { inset-inline: 0; margin-inline: auto; width: 820px; inset-block-start: 760px; }
+.h .recap { inset-inline-end: 170px; inset-block-start: 300px; width: 780px; }
+.chip { display: flex; align-items: center; gap: 26px; height: 136px; padding-inline: 34px; border-radius: 26px; background: #fff; color: var(--n-900); box-shadow: var(--shadow-xl); font-size: 46px; font-weight: 800; opacity: 0; }
+.chip i { width: 78px; height: 78px; border-radius: 22px; background: var(--brand-50); color: var(--brand-600); display: grid; place-items: center; flex: none; }
+.chip.ok i { background: var(--approve-100); color: var(--approve-600); }
+.chip .n { margin-inline-start: auto; color: var(--n-400); font-size: 30px; font-weight: 700; }
+
+/* ===== end card ===== */
+.end { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; opacity: 0; }
+.end img { display: block; }
+.v .end img { width: 700px; }
+.h .end img { width: 640px; }
+.end .tag { margin-block-start: 34px; font-weight: 800; line-height: 1.2; }
+.v .end .tag { font-size: 64px; }
+.h .end .tag { font-size: 60px; }
+.end .tag em { font-style: normal; color: var(--brand-200); }
+.end .url { margin-block-start: 44px; display: inline-flex; align-items: center; height: 84px; padding-inline: 44px; border-radius: 999px; background: #fff; color: var(--brand-700); font-size: 40px; font-weight: 700; }
+.v .end { padding-block-end: 140px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="glow a" id="glowA"></div>
+  <div class="glow b" id="glowB"></div>
+
+  <div class="caps" id="caps">
+    <div class="cap" data-in="250" data-out="3050"><span class="l1">חותמים על מסמך</span><span class="l2">ישר מהנייד</span></div>
+    <div class="cap" data-in="3300" data-out="7900"><span class="l1">העסק שולח לכם</span><span class="l2">קישור לחתימה ב-SMS</span></div>
+    <div class="cap" data-in="8200" data-out="12100"><span class="l1">מגיעה הודעה,</span><span class="l2">לוחצים על הקישור</span></div>
+    <div class="cap" data-in="12300" data-out="18300"><span class="l1">המסמך נפתח בדפדפן</span><span class="l2">בלי להוריד אפליקציה</span></div>
+    <div class="cap" data-in="18500" data-out="24900"><span class="l1">חותמים</span><span class="l2">עם האצבע</span></div>
+    <div class="cap" data-in="25100" data-out="28000"><span class="l1">לוחצים</span><span class="l2 ok">אשר וחתום</span></div>
+    <div class="cap" data-in="28200" data-out="34800"><span class="l1">המסמך נחתם</span><span class="l2">ועותק נשלח למייל</span></div>
+    <div class="cap" data-in="35100" data-out="39800"><span class="l1">פחות מדקה,</span><span class="l2">מכל מקום</span></div>
+  </div>
+
+  <svg class="hooksig" id="hooksig" viewBox="0 0 240 65"><path id="hookpath" d="M18 47C53 3 12 69 63 31S62 69 83 41 113 17 106 41 107 56 123 38 131 19 135 43 163 56 180 24M43 54c47 12 88-1 155-5M156 46c17-1 35-4 63-17"/></svg>
+
+  <!-- the sender -->
+  <div class="desk" id="desk">
+    <div class="desk-bar"><i></i><i></i><i></i><b>Signiv · מסמך חדש לחתימה</b></div>
+    <div class="desk-body">
+      <h5>שליחת מסמך לחתימה</h5>
+      <div class="drop">
+        <span class="hint"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>גררו לכאן מסמך PDF או Word</span>
+        <div class="filecard" id="filecard"><span class="pdf">PDF</span><div><b>הסכם שירות.pdf</b><small>3 עמודים · שדה חתימה אחד</small></div></div>
+      </div>
+      <div class="signer" id="signer"><span class="av">דל</span><div><b>דנה לוי</b><small>חותמת</small></div><span class="chan"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>SMS</span></div>
+      <div class="sendrow"><span class="sendbtn" id="sendbtn"><span class="send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>שליחה לחתימה</span><span class="sent"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>נשלח ב-SMS</span></span></div>
+    </div>
+    <svg class="cursor" id="cursor" viewBox="0 0 24 24"><path d="M4 3l15 7.2-6.4 1.6L9.6 18Z" fill="#fff" stroke="#0f1f4d" stroke-width="1.6" stroke-linejoin="round"/></svg>
+  </div>
+
+  <!-- the signer's phone -->
+  <div class="phone" id="phone">
+    <div class="screen" id="screen">
+      <span class="island"></span>
+
+      <div class="scr lock" id="scrLock">
+        <div class="sbar"><span class="num">10:42</span><span class="ic"><svg width="18" height="12" viewBox="0 0 18 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="#fff" opacity=".6"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#fff"/></svg></span></div>
+        <div class="clock num">10:42</div>
+        <div class="date">יום שלישי</div>
+        <div class="notif" id="notif">
+          <div class="top"><i><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></i>הודעות<time>עכשיו</time></div>
+          <b>Signiv</b><br>שלום דנה, נשלח אליך מסמך לחתימה: הסכם שירות.<br><span class="link num">signiv.co.il/…</span>
+        </div>
+      </div>
+
+      <div class="scr doc" id="scrDoc">
+        <div class="sbar"><span class="num">10:43</span><span class="ic"><svg width="18" height="12" viewBox="0 0 18 12" fill="#0f1f4d"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="#0f1f4d" opacity=".5"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#0f1f4d"/></svg></span></div>
+        <div class="urlbar"><span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span class="num">signiv.co.il</span></span></div>
+        <div class="viewport">
+          <div class="scroll" id="scroll">
+            <div class="apphead"><img src="signiv-icon.svg" alt=""><div><b>Signiv</b><br>מסמך לחתימה</div><span class="st" id="docSt">ממתין לחתימה</span></div>
+            <div class="paper">
+              <h4>הסכם שירות</h4>
+              <p class="sub">נשלח אליך לחתימה · 3 עמודים</p>
+              <h6>1. הצדדים להסכם</h6>
+              <div class="ln" style="width:100%"></div><div class="ln" style="width:92%"></div><div class="ln" style="width:74%"></div>
+              <h6>2. תיאור השירות</h6>
+              <div class="ln" style="width:100%"></div><div class="ln" style="width:96%"></div><div class="ln" style="width:88%"></div><div class="ln" style="width:60%"></div>
+              <h6>3. תנאים כלליים</h6>
+              <div class="ln" style="width:100%"></div><div class="ln" style="width:90%"></div><div class="ln" style="width:97%"></div><div class="ln" style="width:70%"></div>
+              <h6>4. אישור וחתימה</h6>
+              <div class="ln" style="width:84%"></div>
+              <div class="field" id="field">
+                <span class="lbl">חתמו כאן באצבע</span>
+                <svg class="sig" viewBox="0 0 240 65"><path id="sigpath" d="M18 47C53 3 12 69 63 31S62 69 83 41 113 17 106 41 107 56 123 38 131 19 135 43 163 56 180 24M43 54c47 12 88-1 155-5M156 46c17-1 35-4 63-17"/></svg>
+                <span class="who">דנה לוי</span>
+                <svg class="okv" id="okv" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bottombar"><div class="approve" id="approve"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>אשר וחתום</div></div>
+      </div>
+
+      <div class="scr done" id="scrDone">
+        <div class="big" id="bigV"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h4>המסמך נחתם</h4>
+        <p>עותק חתום נשלח אליך במייל</p>
+        <div class="rec"><span class="pdf" style="width:38px;height:46px;font-size:11px">PDF</span><div><b>הסכם שירות</b><small>נחתם היום, <span class="num">10:44</span></small></div><span class="pill">נחתם</span></div>
+      </div>
+
+      <div class="mail" id="mail"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></i><div><b>עותק חתום: הסכם שירות</b><small>המסמך החתום מצורף למייל</small></div></div>
+
+      <div class="ripple" id="ripple"></div>
+      <div class="touch" id="touch"></div>
+    </div>
+  </div>
+
+  <!-- recap -->
+  <div class="recap" id="recap">
+    <div class="chip"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></i>קישור ב-SMS<span class="n num">1</span></div>
+    <div class="chip"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></i>חתימה באצבע<span class="n num">2</span></div>
+    <div class="chip ok"><i><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></i>המסמך נחתם<span class="n num">3</span></div>
+  </div>
+
+  <!-- end card -->
+  <div class="end" id="end">
+    <img src="signiv-logo-horizontal-dark.svg" alt="Signiv" id="logo">
+    <div class="tag">חתימה דיגיטלית על מסמכים,<br><em>מכל מקום</em></div>
+    <div class="url num">signiv.co.il</div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const W = innerWidth, H = innerHeight, V = H > W;
+  document.body.classList.add(V ? 'v' : 'h');
+  window.DUR = 45000;
+  window.geomWarnings = [];
+
+  const $ = (id) => document.getElementById(id);
+  const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const easeOut = (x) => 1 - Math.pow(1 - x, 3);
+  const easeIO = (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  const pr = (t, a, b, e = easeOut) => e(clamp((t - a) / (b - a)));
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const win = (t, a, b, fi = 400, fo = 350) => pr(t, a, a + fi) * (1 - pr(t, b - fo, b));
+
+  const PH = V ? 1.3 : 1.12;      // phone scale
+  const DK = V ? 1.25 : 1;      // desk window scale
+
+  const caps = [...document.querySelectorAll('.cap')].map((el) => ({ el, a: +el.dataset.in, b: +el.dataset.out }));
+  const hookpath = $('hookpath'), sigpath = $('sigpath');
+  const hookLen = hookpath.getTotalLength(), sigLen = sigpath.getTotalLength();
+  hookpath.style.strokeDasharray = sigpath.style.strokeDasharray = 2000;
+  const chips = [...document.querySelectorAll('.chip')];
+  const screen = $('screen');
+
+  // finger positions, in screen pixels at scale 1, measured once from the real layout
+  let P = { notif: [0, 0], approve: [0, 0], send: [0, 0] };
+  function measure() {
+    window.seek(0);
+    const sr = screen.getBoundingClientRect(), k = sr.width / 366;
+    const rel = (el, dx = .5, dy = .5) => { const r = el.getBoundingClientRect(); return [(r.left - sr.left + r.width * dx) / k, (r.top - sr.top + r.height * dy) / k]; };
+    P.notif = rel($('notif'), .45, .6);
+    P.approve = rel($('approve'), .5, .5);
+    const dr = $('desk').getBoundingClientRect(), dk = dr.width / 760, b = $('sendbtn').getBoundingClientRect();
+    P.send = [(b.left - dr.left + b.width * .55) / dk, (b.top - dr.top + b.height * .6) / dk];
+    P.field = $('field');
+  }
+
+  function place(el, x, y, s = 1) { el.style.transform = `translate(${x}px, ${y}px) scale(${s})`; }
+
+  window.seek = (t) => {
+    // background glow drifts slowly
+    place($('glowA'), lerp(V ? -380 : 900, V ? 120 : 1200, t / 45000) + Math.sin(t / 3000) * 40, V ? 900 + Math.cos(t / 4000) * 60 : -300);
+    place($('glowB'), V ? 500 : -200, lerp(V ? -200 : 500, V ? 300 : 700, t / 45000));
+
+    // captions
+    for (const c of caps) {
+      const o = win(t, c.a, c.b, 450, 350);
+      c.el.style.opacity = o;
+      c.el.style.transform = `translateY(${(1 - pr(t, c.a, c.a + 550)) * 34 - pr(t, c.b - 350, c.b) * 24}px)`;
+    }
+
+    // 1. hook: a signature writes itself
+    const hs = $('hooksig');
+    hs.style.opacity = win(t, 300, 3100, 300, 450);
+    hookpath.style.strokeDashoffset = 2000 - hookLen * pr(t, 500, 2600, easeIO);
+
+    // 2. the sender uploads and sends
+    const desk = $('desk');
+    const dIn = pr(t, 3000, 3600), dOut = pr(t, 7300, 7900, easeIO);
+    desk.style.opacity = dIn * (1 - dOut);
+    desk.style.transform = `translateY(${(1 - dIn) * 80 - dOut * 60}px) scale(${DK * (1 - dOut * .12)})`;
+    const fc = $('filecard'), fk = pr(t, 3800, 4500);
+    fc.style.opacity = clamp((t - 3800) / 200);
+    fc.style.transform = `translate(${(1 - fk) * -120}px, ${(1 - fk) * -170}px) rotate(${(1 - fk) * -7}deg)`;
+    const sg = $('signer'), sk = pr(t, 4700, 5200);
+    sg.style.opacity = sk; sg.style.transform = `translateY(${(1 - sk) * 14}px)`;
+    const cur = $('cursor');
+    cur.style.opacity = win(t, 5200, 6900, 200, 300);
+    const ck = pr(t, 5300, 6100, easeIO);
+    const press = t >= 6150 && t < 6350;
+    place(cur, lerp(P.send[0] - 170, P.send[0], ck) - 4, lerp(P.send[1] + 120, P.send[1], ck) - 3, press ? .85 : 1);
+    $('sendbtn').style.transform = press ? 'scale(.95)' : 'none';
+    desk.classList.toggle('is-sent', t >= 6350);
+
+    // the phone: rises at 7.6 s, steps aside at 35 s
+    const phone = $('phone');
+    const pIn = pr(t, 7600, 8500), pOut = pr(t, 34900, 35700, easeIO);
+    phone.style.opacity = clamp((t - 7600) / 250) * (1 - pOut);
+    phone.style.transform = `translateY(${(1 - pIn) * 700 + pOut * 120}px) scale(${PH * (1 - pOut * .1)})`;
+
+    // screens
+    const toDoc = pr(t, 11500, 11950), toDone = pr(t, 27900, 28350);
+    $('scrLock').style.opacity = 1 - toDoc;
+    $('scrDoc').style.opacity = toDoc * (1 - toDone);
+    $('scrDone').style.opacity = toDone;
+    $('scrDoc').style.transform = `translateY(${(1 - toDoc) * 40}px)`;
+
+    // 3. the SMS
+    const nk = pr(t, 8800, 9400);
+    $('notif').style.opacity = nk;
+    $('notif').style.transform = `translateY(${(1 - nk) * -30}px) scale(${lerp(.94, 1, nk) * (t > 11050 && t < 11300 ? .97 : 1)})`;
+
+    // 4. read: scroll down to the field
+    const scroll = $('scroll');
+    const maxScroll = scroll.scrollHeight - (800 - 24 - 102 - 104);
+    scroll.style.transform = `translateY(${-maxScroll * pr(t, 13600, 17600, easeIO)}px)`;
+
+    // 5. sign with the finger
+    const field = $('field');
+    const pulse = t > 18400 && t < 19800 ? Math.sin(((t - 18400) / 1400) * Math.PI) : 0;
+    field.style.transform = `scale(${1 + pulse * .04})`;
+    const sk2 = pr(t, 20000, 23600, (x) => x);
+    sigpath.style.strokeDashoffset = 2000 - sigLen * sk2;
+    const signed = t >= 24000;
+    field.classList.toggle('signed', signed);
+    $('okv').style.opacity = pr(t, 24000, 24300);
+    const ap = $('approve');
+    ap.classList.toggle('on', t >= 24000);
+    const apPress = t >= 26500 && t < 26750;
+    ap.classList.toggle('press', apPress);
+    ap.style.transform = `scale(${apPress ? .96 : 1 + (t > 24000 && t < 24600 ? Math.sin(((t - 24000) / 600) * Math.PI) * .03 : 0)})`;
+
+    // the finger
+    const touch = $('touch'), rip = $('ripple');
+    let tx = null, ty = null, down = false, ripK = -1, fade = 1;
+    if (t >= 10300 && t < 11600) {            // tap the SMS
+      const k = pr(t, 10300, 10950);
+      tx = lerp(P.notif[0] + 70, P.notif[0], k); ty = lerp(P.notif[1] + 160, P.notif[1], k);
+      down = t >= 11000 && t < 11250; if (t >= 11000) ripK = (t - 11000) / 500;
+      fade = pr(t, 10300, 10500) * (1 - pr(t, 11300, 11600));
+    } else if (t >= 19700 && t < 24200) {     // sign
+      const sr = screen.getBoundingClientRect(), k = sr.width / 366;
+      const svg = field.querySelector('svg.sig').getBoundingClientRect();
+      const pt = sigpath.getPointAtLength(sigLen * sk2);
+      tx = (svg.left - sr.left) / k + pt.x * (300 / 240);
+      ty = (svg.top - sr.top) / k + pt.y * (82 / 65);
+      if (t < 20000) { const k2 = pr(t, 19700, 20000); ty += (1 - k2) * 120; }
+      down = t >= 20000 && t < 23600;
+      if (t > 23600) { ty -= pr(t, 23600, 24200) * 60; }
+      fade = pr(t, 19700, 19900) * (1 - pr(t, 23900, 24200));
+    } else if (t >= 25600 && t < 27300) {     // approve
+      const k = pr(t, 25600, 26400);
+      tx = lerp(P.approve[0] + 60, P.approve[0], k); ty = lerp(P.approve[1] - 150, P.approve[1], k);
+      down = apPress; if (t >= 26500) ripK = (t - 26500) / 500;
+      fade = pr(t, 25600, 25800) * (1 - pr(t, 27000, 27300));
+    }
+    if (tx === null) { touch.style.opacity = 0; }
+    else {
+      touch.style.opacity = fade;
+      place(touch, tx, ty, down ? .82 : 1);
+    }
+    if (ripK >= 0 && ripK <= 1 && tx !== null) { rip.style.opacity = 1 - ripK; place(rip, tx, ty, 1 + ripK * 1.4); } else rip.style.opacity = 0;
+
+    // 7. signed, and the copy arrives by mail
+    const bk = pr(t, 28200, 28900);
+    $('bigV').style.transform = `scale(${lerp(.4, 1, bk) + Math.sin(bk * Math.PI) * .08})`;
+    const mk = pr(t, 30600, 31200), mOut = pr(t, 34000, 34500);
+    $('mail').style.opacity = mk * (1 - mOut);
+    $('mail').style.transform = `translateY(${(1 - mk) * -40 - mOut * 30}px)`;
+
+    // 8. recap
+    chips.forEach((c, i) => {
+      const a = 35700 + i * 500, k = pr(t, a, a + 450), o = 1 - pr(t, 39400, 39900);
+      c.style.opacity = k * o;
+      c.style.transform = `translateY(${(1 - k) * 40}px) scale(${lerp(.96, 1, k)})`;
+    });
+
+    // 9. the logo
+    const ek = pr(t, 40200, 41000);
+    $('end').style.opacity = ek;
+    $('logo').style.transform = `scale(${lerp(.9, 1, ek)})`;
+    const tg = document.querySelector('.end .tag'), uk = pr(t, 40900, 41500), ul = document.querySelector('.end .url'), ukk = pr(t, 41500, 42100);
+    tg.style.opacity = uk; tg.style.transform = `translateY(${(1 - uk) * 24}px)`;
+    ul.style.opacity = ukk; ul.style.transform = `translateY(${(1 - ukk) * 24}px)`;
+  };
+
+  window.ready = (async () => {
+    await document.fonts.ready;
+    await Promise.all([...document.images].map((i) => i.decode().catch(() => window.geomWarnings.push('image did not decode: ' + i.src))));
+    if (!document.fonts.check('800 40px Heebo', 'שלום')) window.geomWarnings.push('Heebo did not load');
+    measure();
+    // every caption line must fit its box on one line
+    const box = $('caps').getBoundingClientRect();
+    document.querySelectorAll('.cap .l1, .cap .l2').forEach((l) => {
+      if (l.scrollWidth > box.width + 1) window.geomWarnings.push(`caption wider than its box (${Math.round(l.scrollWidth)} > ${Math.round(box.width)}): ${l.textContent}`);
+    });
+    // key elements stay inside the safe area of a vertical post (above y=1680)
+    if (V) {
+      window.seek(26000);
+      const ap = $('approve').getBoundingClientRect();
+      if (ap.bottom > 1680) window.geomWarnings.push(`approve button ends at y=${Math.round(ap.bottom)} (> 1680)`);
+      window.seek(37500);
+      const last = chips[2].getBoundingClientRect();
+      if (last.bottom > 1680) window.geomWarnings.push(`last recap chip ends at y=${Math.round(last.bottom)} (> 1680)`);
+    }
+    window.seek(0);
+  })();
+})();
+</script>
+</body>
+</html>
