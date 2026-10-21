@@ -1,0 +1,4 @@
+// written by _tools/vo-timing.js from narration.json and the voice clips; do not edit by hand
+window.WARP = [[0,0],[300,300],[3254,3200],[3454,3400],[8630,8000],[9430,8800],[12897,12000],[13097,12200],[20733,18500],[20833,18600],[27233,25000],[27433,25200],[30133,27900],[30633,28400],[37033,34800],[37833,35600],[42033,39800],[43033,40800],[46773,44500],[47273,45000]];
+window.VO = [{"file":"vo-1.mp3","at":300,"speech":2554},{"file":"vo-2.mp3","at":3454,"speech":4776},{"file":"vo-3.mp3","at":9430,"speech":3067},{"file":"vo-4.mp3","at":13097,"speech":7236},{"file":"vo-5.mp3","at":20833,"speech":5738},{"file":"vo-6.mp3","at":27433,"speech":2065},{"file":"vo-7.mp3","at":30633,"speech":4688},{"file":"vo-8.mp3","at":37782,"speech":1587},{"file":"vo-9.mp3","at":43033,"speech":3341}];
+window.VDUR = 47273;

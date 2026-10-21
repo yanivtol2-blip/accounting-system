@@ -2,6 +2,7 @@
 // Narration with ElevenLabs: one clip per line of <video>/narration.json -> out/vo-<n>.mp3,
 // then reports each clip's length against its window.
 //   ELEVENLABS_API_KEY=... node tts.js --lines ../<name>/narration.json [--voice <id>] [--model <id>] [--speed 1.0]
+//   --only 2 makes one line again (a retake)
 //   node tts.js --voices          lists the account's voices (and Hebrew female ones from the library)
 const fs = require('fs');
 const path = require('path');
@@ -43,6 +44,8 @@ async function speak() {
   const speed = Number(args.speed || 1);
   let prev;
   for (let n = 0; n < lines.length; n++) {
+    prev = n ? lines[n - 1].text : undefined;
+    if (args.only && Number(args.only) !== n + 1) continue;
     const body = { text: lines[n].text, model_id: model, language_code: 'he',
       voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.2, speed } };
     if (prev) body.previous_text = prev;
@@ -55,7 +58,6 @@ async function speak() {
     const dur = Number(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', file]).toString()) * 1000;
     const room = lines[n].end - lines[n].at;
     console.log(`${dur <= room ? 'FITS' : 'LONG'}: line ${n + 1} ${Math.round(dur)}ms of ${room}ms`);
-    prev = lines[n].text;
   }
 }
 
