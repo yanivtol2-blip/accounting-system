@@ -1,0 +1,8 @@
+{
+  "name": "signiv-video-tools",
+  "private": true,
+  "description": "Renders the code-drawn videos in store/videos (see README.md)",
+  "dependencies": {
+    "puppeteer-core": "^24.0.0"
+  }
+}
