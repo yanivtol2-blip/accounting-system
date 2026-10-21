@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ג עם סגול - Signiv - חתימה דיגיטלית על מסמכים, מכל מקום</title>
+<link rel="stylesheet" href="../assets/fonts/fonts.css">
+<style>
+:root{
+  --brand:#2563eb; --brand-h:#1d4ed8; --brand-l:#3b82f6;
+  --night:#0f1f4d; --night-2:#172f86; --night-3:#1c3fb5;
+  --deep:#0c0f38; --abyss:#080a2a;
+  --paper:#f6f8fd; --line:#e1e7f3; --ink2:#4d5a78;
+  --on-dark:#c7d1ea;           /* body on navy, AA */
+  --on-dark-strong:#eef2fb;
+  --glow:#7db0ff;
+  --ok:#22c55e; --ok-d:#16a34a;
+  --r-btn:12px; --r-card:16px; --r-win:20px;
+  --wrap:1280px;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{font-family:Heebo,system-ui,sans-serif;font-size:16px;line-height:1.65;color:var(--on-dark);background:var(--deep);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+ul,ol{list-style:none;padding:0}
+.wrap{width:min(var(--wrap),100% - 40px);margin-inline:auto}
+.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+:focus-visible{outline:3px solid var(--glow);outline-offset:3px;border-radius:6px}
+
+/* grain on everything dark */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.07;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E")}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:0 30px;border-radius:var(--r-btn);font-weight:700;font-size:17px;transition:transform .2s,box-shadow .2s,background .2s}
+.btn-primary{background:var(--brand);color:#fff;box-shadow:0 0 0 1px rgba(125,176,255,.5) inset,0 10px 40px -8px rgba(37,99,235,.9),0 0 60px -10px rgba(59,130,246,.8)}
+.btn-primary:hover{background:var(--brand-h);transform:translateY(-2px)}
+.btn-ghost{color:var(--on-dark-strong);border:1px solid rgba(199,209,234,.35);min-height:44px;padding:0 20px;font-size:15px}
+.btn-ghost:hover{background:rgba(255,255,255,.08)}
+.btn-light{background:#fff;color:var(--night);border:1px solid var(--line)}
+.btn-light:hover{background:#eef2fa}
+.btn svg{width:18px;height:18px}
+
+/* ---------- NAV ---------- */
+.nav{position:sticky;top:0;z-index:50;background:rgba(8,18,54,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(125,176,255,.14)}
+.nav .wrap{display:flex;align-items:center;gap:28px;height:72px}
+.nav .logo img{height:44px;width:auto;display:block}
+.nav-links{display:flex;align-items:center;gap:26px;margin-inline-start:12px;font-size:15px;font-weight:500;color:var(--on-dark)}
+.nav-links a,.nav-links button{padding:8px 2px;transition:color .2s}
+.nav-links a:hover,.nav-links button:hover{color:#fff}
+.nav-end{margin-inline-start:auto;display:flex;align-items:center;gap:14px}
+.nav-login{font-size:15px;font-weight:500;color:var(--on-dark)}
+.nav-login:hover{color:#fff}
+.nav .btn-primary{min-height:44px;padding:0 22px;font-size:15px}
+.dd{position:relative}
+.dd-btn{display:inline-flex;align-items:center;gap:6px}
+.dd-btn svg{width:14px;height:14px;transition:transform .2s}
+.dd[data-open="true"] .dd-btn svg{transform:rotate(180deg)}
+.dd-panel{position:absolute;inset-inline-start:-20px;top:calc(100% + 14px);width:560px;padding:18px;border-radius:var(--r-win);background:rgba(11,25,70,.97);border:1px solid rgba(125,176,255,.25);box-shadow:0 30px 80px -20px #000;display:none;grid-template-columns:repeat(3,1fr);gap:2px}
+.dd[data-open="true"] .dd-panel{display:grid}
+.dd-panel a{padding:10px 12px;border-radius:10px;font-size:15px}
+.dd-panel a:hover{background:rgba(59,130,246,.2);color:#fff}
+.burger{display:none;width:48px;height:48px;border-radius:12px;border:1px solid rgba(199,209,234,.3);place-items:center}
+.burger svg{width:22px;height:22px}
+.m-menu{display:none}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;isolation:isolate;overflow:hidden;padding-block:72px 250px;
+  background:
+   radial-gradient(900px 620px at 18% 42%,rgba(37,99,235,.34),transparent 62%),
+   radial-gradient(760px 560px at 84% 6%,rgba(139,92,246,.42),transparent 62%),radial-gradient(520px 420px at 55% 95%,rgba(168,85,247,.18),transparent 65%),
+   linear-gradient(180deg,#151a52 0%,#11134a 55%,#0c0f38 100%)}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;
+  background-image:linear-gradient(rgba(125,176,255,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(125,176,255,.09) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 70% at 50% 40%,#000,transparent 80%);mask-image:radial-gradient(ellipse 70% 70% at 50% 40%,#000,transparent 80%)}
+.hero-stroke{position:absolute;inset-inline:0;bottom:-10px;width:100%;height:auto;z-index:-1;pointer-events:none;overflow:visible}
+.hero-stroke path{fill:none;stroke:#cfe0ff;stroke-width:.7;stroke-linecap:round;
+  filter:drop-shadow(0 0 6px #8fb8ff) drop-shadow(0 0 22px #3b82f6) drop-shadow(0 0 50px rgba(37,99,235,.9));
+  stroke-dasharray:1;stroke-dashoffset:0;opacity:.85}
+.hero-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:center}
+.hero-copy{position:relative;z-index:2}
+.eyebrow{display:inline-flex;align-items:center;gap:12px;font-weight:600;font-size:15px;color:#d9e4ff;padding-block:6px}
+.eyebrow i{width:36px;height:2px;background:linear-gradient(90deg,transparent,var(--glow));display:block;border-radius:2px}
+h1{font-weight:900;font-size:clamp(46px,6.2vw,92px);line-height:.98;letter-spacing:0;color:#fff;margin-block:20px 28px;text-wrap:balance}
+h1 em{font-style:normal;background:linear-gradient(100deg,#fff 0%,#a5b8ff 40%,#a78bfa 100%);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block;padding-bottom:.08em}
+.hero .sub{font-size:clamp(18px,1.6vw,22px);line-height:1.6;max-width:30em;color:var(--on-dark)}
+.hero-cta{display:flex;align-items:center;flex-wrap:wrap;gap:12px 28px;margin-top:36px}
+.hero-cta .btn-primary{min-height:62px;padding:0 42px;font-size:20px}
+.link-quiet{display:inline-flex;align-items:center;gap:10px;font-weight:600;color:var(--on-dark-strong);padding-block:12px;border-bottom:1px solid transparent}
+.link-quiet:hover{border-bottom-color:var(--glow)}
+.link-quiet svg{width:16px;height:16px}
+.trust{display:flex;flex-wrap:wrap;gap:12px 30px;margin-top:44px;padding-top:24px;border-top:1px solid rgba(125,176,255,.2);font-size:15px;font-weight:500;color:var(--on-dark-strong)}
+.trust li{display:flex;align-items:center;gap:10px}
+.trust svg{width:20px;height:20px;color:var(--glow);flex:none}
+
+/* doc stage */
+.stage{perspective:1500px;position:relative;z-index:2;display:grid;place-items:center;min-height:620px}
+.tilt{position:relative;width:min(100%,400px);transform-style:preserve-3d;transform:rotateY(14deg) rotateX(7deg) rotateZ(-3deg);transition:transform .25s ease-out;animation:float 9s ease-in-out infinite}
+@keyframes float{0%,100%{translate:0 0}50%{translate:0 -14px}}
+.sheet{position:absolute;inset:0;border-radius:var(--r-win);background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.04));border:1px solid rgba(190,215,255,.35);box-shadow:0 40px 90px -30px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.35);backdrop-filter:blur(6px)}
+.sheet.s1{transform:translate3d(-64px,26px,-70px) rotateZ(5deg)}
+.sheet.s2{transform:translate3d(-118px,50px,-150px) rotateZ(10deg);opacity:.6}
+.sheet .ln{position:absolute;inset-inline:26px;height:7px;border-radius:4px;background:rgba(220,232,255,.22)}
+.doc{position:relative;border-radius:var(--r-win);background:linear-gradient(180deg,#fbfcff,#eef3fc);color:var(--night);padding:22px 24px 26px;box-shadow:0 60px 100px -30px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.7) inset,0 0 80px -10px rgba(91,149,255,.55)}
+.doc-top{display:flex;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.doc-top .ic{width:34px;height:34px;color:var(--brand)}
+.doc-top b{font-size:20px;font-weight:800;line-height:1.2}
+.doc-top small{display:block;font-size:12.5px;color:var(--ink2);font-weight:500}
+.pills{margin-inline-start:auto;position:relative;width:104px;height:30px}
+.pill{position:absolute;inset:0;display:grid;place-items:center;border-radius:999px;font-size:13px;font-weight:700}
+.pill.sent{background:#dbeafe;color:#1d4ed8}
+.pill.done{background:#dcfce7;color:#15803d}
+.doc h4{font-size:13.5px;font-weight:800;margin-top:18px;margin-bottom:9px}
+.doc .ph{display:block;height:7px;border-radius:4px;background:#dfe6f4;margin-bottom:8px}
+.sigfield{position:relative;margin-top:22px;border:2px solid var(--ok);border-radius:14px;background:#f0fdf4;padding:12px 14px 30px;height:132px}
+.sigfield .lbl{font-size:13px;font-weight:700;color:var(--brand-h)}
+.sigfield .who{position:absolute;inset-block-end:9px;inset-inline-start:14px;font-size:12.5px;color:var(--ink2)}
+.sigfield svg.sig{position:absolute;inset-inline:0;margin-inline:auto;top:28px;width:230px;height:62px;color:var(--night);overflow:visible}
+.sigfield svg.sig path{stroke-dasharray:720;stroke-dashoffset:0}
+.sigfield .tick{position:absolute;inset-block-start:11px;inset-inline-end:12px;width:20px;height:20px;color:var(--ok-d)}
+.seal{position:absolute;inset-block-end:-34px;inset-inline-end:-26px;width:112px;height:112px;border-radius:50%;display:grid;place-items:center;text-align:center;color:#fff;
+  background:radial-gradient(circle at 35% 28%,#4ade80,#16a34a 70%);box-shadow:0 0 0 5px rgba(255,255,255,.9),0 0 0 7px #16a34a,0 18px 50px -6px rgba(34,197,94,.75),0 0 60px rgba(34,197,94,.5);transform:rotate(-12deg) translateZ(70px)}
+.seal b{display:block;font-size:26px;font-weight:900;line-height:1}
+.seal svg{width:26px;height:26px;display:block;margin:0 auto 3px}
+.ring{position:absolute;inset-block-end:-34px;inset-inline-end:-26px;width:112px;height:112px;border-radius:50%;border:2px solid var(--ok);opacity:0;pointer-events:none}
+.chip{position:absolute;inset-inline-start:-40px;inset-block-end:-78px;padding:10px 16px;border-radius:14px;background:rgba(11,25,70,.78);border:1px solid rgba(160,200,255,.4);backdrop-filter:blur(10px);color:#fff;font-size:13.5px;font-weight:600;box-shadow:0 20px 50px -14px #000;transform:translateZ(90px);display:flex;gap:10px;align-items:center}
+.chip i{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 12px #4ade80}
+
+/* loop: 10s */
+.sigfield svg.sig path{animation:draw 10s cubic-bezier(.6,.05,.3,1) infinite}
+@keyframes draw{0%,8%{stroke-dashoffset:720}40%,94%{stroke-dashoffset:0}96%{stroke-dashoffset:0;opacity:0}96.1%{stroke-dashoffset:720;opacity:0}100%{stroke-dashoffset:720;opacity:1}}
+.seal{animation:seal 10s infinite}
+@keyframes seal{0%,41%{opacity:0;transform:rotate(-12deg) translateZ(70px) scale(2.6)}46%{opacity:1;transform:rotate(-12deg) translateZ(70px) scale(.92)}49%,94%{opacity:1;transform:rotate(-12deg) translateZ(70px) scale(1)}97%,100%{opacity:0;transform:rotate(-12deg) translateZ(70px) scale(1)}}
+.ring{animation:ring 10s infinite}
+@keyframes ring{0%,45%{opacity:0;transform:scale(1)}46%{opacity:.9;transform:scale(1)}58%,100%{opacity:0;transform:scale(2.6)}}
+.pill.sent{animation:psent 10s infinite}
+.pill.done{animation:pdone 10s infinite}
+@keyframes psent{0%,44%{opacity:1}46%,95%{opacity:0}97%,100%{opacity:1}}
+@keyframes pdone{0%,44%{opacity:0}46%,95%{opacity:1}97%,100%{opacity:0}}
+.sigfield{animation:sf 10s infinite}
+@keyframes sf{0%,43%{border-color:#7aa7f5;background:#eff5ff}46%,94%{border-color:var(--ok);background:#f0fdf4}97%,100%{border-color:#7aa7f5;background:#eff5ff}}
+.chip{animation:chip 10s infinite}
+@keyframes chip{0%,47%{opacity:0;transform:translateZ(90px) translateY(12px)}52%,93%{opacity:1;transform:translateZ(90px)}96%,100%{opacity:0;transform:translateZ(90px)}}
+.tick{animation:tick 10s infinite}
+@keyframes tick{0%,44%{opacity:0}47%,94%{opacity:1}97%,100%{opacity:0}}
+.hero-stroke path{animation:strokeDraw 2.2s cubic-bezier(.5,.1,.2,1) both .1s}
+@keyframes strokeDraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.rv{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
+.rv.d1{animation-delay:.1s}.rv.d2{animation-delay:.2s}.rv.d3{animation-delay:.32s}.rv.d4{animation-delay:.44s}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+/* ---------- section scaffolding ---------- */
+section{position:relative}
+.sec{padding-block:120px}
+.sec-dark{background:var(--deep)}
+.sec-mid{background:linear-gradient(180deg,#11134a,#0c0f38)}
+.kicker{display:inline-block;font-size:15px;font-weight:700;color:#9cc2ff;margin-bottom:14px}
+h2{font-weight:900;font-size:clamp(36px,5vw,72px);line-height:1.02;color:#fff;text-wrap:balance;max-width:14em}
+h2 em{font-style:normal;color:#9cc2ff}
+.lead{font-size:clamp(17px,1.4vw,20px);max-width:36em;margin-top:22px;color:var(--on-dark)}
+.glowline{position:absolute;inset-inline:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(125,176,255,.7),transparent)}
+
+/* ---------- HOW ---------- */
+.how-top{display:grid;grid-template-columns:1fr;gap:12px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);margin-top:72px;position:relative}
+.steps::before{content:"";position:absolute;inset-inline:0;top:118px;height:2px;background:linear-gradient(90deg,#7db0ff,rgba(125,176,255,.1));box-shadow:0 0 18px #3b82f6;border-radius:2px}
+.step{position:relative;padding-inline-end:36px}
+.step .num{display:block;font-weight:900;font-size:clamp(96px,11vw,168px);line-height:1;color:transparent;-webkit-text-stroke:2px rgba(156,194,255,.75);margin-bottom:6px;height:1.05em}
+.step .dot{position:absolute;top:112px;inset-inline-start:0;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 0 5px rgba(59,130,246,.35),0 0 24px #7db0ff}
+.step h3{font-size:26px;font-weight:800;color:#fff;line-height:1.25;margin-top:44px}
+.step p{margin-top:12px;max-width:20em}
+
+/* signer + video */
+.signer{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:64px;align-items:center;margin-top:140px}
+.signer h3{font-weight:900;font-size:clamp(32px,3.8vw,54px);line-height:1.05;color:#fff;text-wrap:balance}
+.signer ol{margin-top:34px;counter-reset:s}
+.signer li{display:flex;gap:16px;align-items:baseline;padding-block:15px;border-top:1px solid rgba(125,176,255,.2);font-size:18px;color:var(--on-dark-strong);font-weight:500}
+.signer li:last-child{border-bottom:1px solid rgba(125,176,255,.2)}
+.signer li::before{counter-increment:s;content:counter(s);font-weight:800;color:#9cc2ff;width:22px;flex:none;font-feature-settings:"tnum"}
+.signer li b{color:#fff}
+.signer li.fin b{color:#4ade80}
+.video{position:relative;display:block;width:100%;border-radius:var(--r-win);overflow:hidden;border:1px solid rgba(160,200,255,.4);box-shadow:0 50px 120px -30px #000,0 0 0 8px rgba(255,255,255,.04),0 0 120px -10px rgba(59,130,246,.65);aspect-ratio:16/9;background:#0b1a4a;cursor:pointer;transition:transform .35s}
+.video:hover{transform:scale(1.012)}
+.video img{display:block;width:100%;height:100%;object-fit:cover}
+.video::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,12,40,0) 55%,rgba(5,12,40,.75))}
+.play{position:absolute;z-index:2;inset:0;margin:auto;width:104px;height:104px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 0 0 12px rgba(255,255,255,.18),0 20px 60px rgba(0,0,0,.5)}
+.play svg{width:38px;height:38px;color:var(--brand);margin-inline-start:-4px}
+.play::before{content:"";position:absolute;inset:-12px;border-radius:50%;border:2px solid rgba(255,255,255,.7);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.5);opacity:0}}
+.video .cap{position:absolute;z-index:2;inset-inline:24px;bottom:18px;display:flex;justify-content:space-between;align-items:center;color:#fff;font-weight:700;font-size:17px}
+.video .cap span:last-child{font-size:14px;font-weight:500;color:#dfe8ff}
+
+/* ---------- BENEFITS ---------- */
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;margin-top:64px}
+.bx{position:relative;padding:30px;border-radius:var(--r-card);border:1px solid rgba(125,176,255,.22);background:linear-gradient(160deg,rgba(124,58,237,.16),rgba(21,26,82,.3));overflow:hidden;min-height:210px;transition:border-color .3s,transform .3s}
+.bx:hover{border-color:rgba(156,194,255,.6);transform:translateY(-3px)}
+.bx h3{font-size:24px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:10px}
+.bx p{max-width:26em}
+.bx svg.i{width:34px;height:34px;color:#9cc2ff;margin-bottom:22px;display:block}
+.b-a{grid-column:span 4;background:linear-gradient(135deg,#3b2fb8,#151a52 75%);min-height:300px}
+.b-a h3{font-size:clamp(30px,3.4vw,48px);font-weight:900;line-height:1.05;max-width:11em}
+.strike{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.strike span{padding:6px 16px;border-radius:999px;border:1px dashed rgba(199,209,234,.5);text-decoration:line-through;text-decoration-thickness:2px;color:#d7e0f5;font-weight:600}
+.b-a::after{content:"";position:absolute;inset-inline-end:-60px;inset-block-start:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(125,176,255,.45),transparent 65%)}
+.b-b{grid-column:span 2}
+.b-c,.b-d,.b-e{grid-column:span 2}
+.b-f{grid-column:span 6;display:flex;align-items:center;gap:40px;flex-wrap:wrap;min-height:0;padding-block:28px}
+.b-f .tx{flex:1 1 320px}
+.b-f h3{margin-bottom:6px}
+.avs{display:flex;gap:0}
+.avs span{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;border:3px solid #0d1d52;margin-inline-start:-10px;font-size:16px}
+.mini-tl{margin-top:16px;display:grid;gap:8px}
+.mini-tl div{display:flex;gap:10px;align-items:center;font-size:14.5px;font-weight:500;color:var(--on-dark-strong)}
+.mini-tl i{width:9px;height:9px;border-radius:50%;background:#7db0ff;box-shadow:0 0 10px #7db0ff;flex:none}
+.mini-tl div:last-child i{background:#4ade80;box-shadow:0 0 10px #4ade80}
+
+/* ---------- TRACK ---------- */
+.track{background:radial-gradient(900px 500px at 70% 0%,rgba(124,58,237,.26),transparent 60%),radial-gradient(700px 400px at 10% 100%,rgba(37,99,235,.18),transparent 60%),#11134a}
+.pipe{display:grid;grid-template-columns:repeat(6,1fr);margin-top:72px;position:relative}
+.pipe li{position:relative;text-align:center}
+.node{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;padding:0 6px;color:inherit}
+.node .d{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--c);box-shadow:0 0 0 6px color-mix(in oklab,var(--c) 30%,transparent),0 0 30px var(--c);position:relative;z-index:2;transition:transform .25s}
+.node .d svg{width:16px;height:16px;color:#05123a}
+.node:hover .d,.node[aria-pressed="true"] .d{transform:scale(1.25)}
+.node .st{padding:5px 14px;border-radius:999px;font-weight:800;font-size:15px;background:var(--bg);color:var(--fg)}
+.node small{font-size:14px;line-height:1.4;color:var(--on-dark);max-width:11em}
+.pipe li:not(:last-child)::after{content:"";position:absolute;top:14px;inset-inline-start:50%;width:100%;height:3px;border-radius:3px;background:linear-gradient(90deg,#7db0ff,#7db0ff);box-shadow:0 0 14px #3b82f6,0 0 30px rgba(59,130,246,.7);z-index:1}
+.pipe li:nth-child(3)::after{background:linear-gradient(90deg,#7db0ff,#4ade80);box-shadow:0 0 14px #4ade80}
+.pipe li:nth-child(4)::after,.pipe li:nth-child(5)::after{background:repeating-linear-gradient(90deg,rgba(199,209,234,.55) 0 8px,transparent 8px 16px);box-shadow:none;height:2px;top:15px}
+.pipe li:nth-child(1){--c:#9fb0d3;--bg:#eef2fa;--fg:#4d5a78}
+.pipe li:nth-child(2){--c:#60a5fa;--bg:#dbeafe;--fg:#1d4ed8}
+.pipe li:nth-child(3){--c:#fbbf24;--bg:#fef3c7;--fg:#b45309}
+.pipe li:nth-child(4){--c:#4ade80;--bg:#dcfce7;--fg:#15803d}
+.pipe li:nth-child(5){--c:#fb7185;--bg:#ffe4e6;--fg:#be123c}
+.pipe li:nth-child(6){--c:#94a3c4;--bg:#e1e7f3;--fg:#4a5878}
+.glass{margin-top:64px;border-radius:var(--r-win);border:1px solid rgba(160,200,255,.28);background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));box-shadow:0 40px 100px -40px #000,inset 0 1px 0 rgba(255,255,255,.18);overflow:hidden}
+.glass-h,.row{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:16px;padding:18px 28px;align-items:center}
+.glass-h{font-size:14px;font-weight:700;color:#aebbdd;border-bottom:1px solid rgba(160,200,255,.2)}
+.row{border-bottom:1px solid rgba(160,200,255,.12);transition:opacity .3s,background .3s;font-size:17px}
+.row:last-child{border-bottom:0}
+.row b{color:#fff;font-weight:700}
+.row .pill2{justify-self:start;padding:4px 14px;border-radius:999px;font-weight:700;font-size:14px;background:var(--bg);color:var(--fg)}
+.glass[data-f] .row{opacity:.28}
+.glass[data-f="draft"] .row[data-s="draft"],.glass[data-f="sent"] .row[data-s="sent"],.glass[data-f="viewed"] .row[data-s="viewed"],.glass[data-f="signed"] .row[data-s="signed"],.glass[data-f="rejected"] .row[data-s="rejected"],.glass[data-f="expired"] .row[data-s="expired"]{opacity:1;background:rgba(59,130,246,.16)}
+.hint{margin-top:16px;font-size:14.5px;color:#aebbdd}
+
+/* ---------- DOMAINS ---------- */
+.doms{margin-top:56px;border-top:1px solid rgba(125,176,255,.25)}
+.dom{display:flex;align-items:baseline;justify-content:space-between;gap:30px;padding-block:20px;border-bottom:1px solid rgba(125,176,255,.25);transition:padding .3s,background .3s;cursor:default}
+.dom b{font-weight:900;font-size:clamp(40px,7.4vw,112px);line-height:1;color:transparent;-webkit-text-stroke:2px #cfe0ff;transition:color .3s,-webkit-text-stroke-color .3s}
+.dom span{font-size:17px;max-width:16em;text-align:end;color:var(--on-dark)}
+.dom:hover{padding-inline:24px;background:linear-gradient(90deg,transparent,rgba(37,99,235,.28),transparent)}
+.dom:hover b{color:#fff;-webkit-text-stroke-color:#fff}
+.marq{margin-top:64px;overflow:hidden;white-space:nowrap;-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+.marq-t{display:flex;width:max-content;animation:marq 60s linear infinite}
+.marq-t a{display:flex;align-items:center;font-weight:800;font-size:28px;color:#d7e3ff;padding-inline:22px}
+.marq-t a::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--glow);box-shadow:0 0 12px var(--glow);margin-inline-start:44px}
+.marq-t a:hover{color:#fff}
+@keyframes marq{to{transform:translateX(50%)}}
+
+/* ---------- LIGHT / PAPER ---------- */
+.paper{background:
+  linear-gradient(var(--line) 1px,transparent 1px) 0 0/100% 40px,
+  var(--paper);color:var(--ink2);padding-block:120px}
+.paper::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,var(--paper),rgba(246,248,253,.7) 30%,var(--paper) 100%);pointer-events:none}
+.paper>.wrap{position:relative}
+.paper h2{color:var(--night)}
+.paper h2 em{color:var(--brand)}
+.paper .kicker{color:var(--brand-h)}
+.paper .lead{color:var(--ink2)}
+.paper-top{position:absolute;inset-inline:0;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--brand-l),transparent)}
+.plans{display:grid;grid-template-columns:5fr 7fr;gap:28px;margin-top:64px;align-items:stretch}
+.plan{border-radius:24px;padding:40px;background:#fff;border:1px solid var(--line);box-shadow:0 30px 70px -40px rgba(15,31,77,.35);display:flex;flex-direction:column}
+.plan h3{font-weight:900;font-size:30px;color:var(--night);line-height:1.15}
+.plan p{margin-top:12px}
+.plan .btn{margin-top:auto;align-self:flex-start}
+.plan:not(.rec){align-self:start}
+.plan.rec{background:linear-gradient(150deg,#2a238f,#151a52 70%);color:var(--on-dark);border:0;position:relative;overflow:hidden;box-shadow:0 50px 100px -40px rgba(15,31,77,.8)}
+.plan.rec::before{content:"";position:absolute;inset-inline-end:-80px;inset-block-start:-80px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(125,176,255,.45),transparent 65%)}
+.plan.rec h3{color:#fff;font-size:clamp(30px,3.4vw,46px);line-height:1.05;max-width:15em;position:relative}
+.badge{display:inline-block;align-self:flex-start;font-size:14px;font-weight:700;color:#cfe0ff;border:1px solid rgba(160,200,255,.5);border-radius:999px;padding:3px 14px;margin-bottom:18px;position:relative}
+.after{margin-top:20px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;color:var(--on-dark);position:relative}
+.after .amt{font-weight:900;font-size:44px;color:#fff;line-height:1}
+.after .amt span.cur{font-size:30px;margin-inline-start:4px}
+.inc{display:grid;grid-template-columns:1fr 1fr;gap:12px 28px;margin-block:30px 34px;position:relative}
+.inc li{display:flex;gap:10px;align-items:flex-start;font-size:16px;color:var(--on-dark-strong);line-height:1.45}
+.inc svg{width:20px;height:20px;color:#7db0ff;flex:none;margin-top:2px}
+.plan.rec .btn{position:relative}
+
+/* FAQ */
+.faq-grid{display:grid;grid-template-columns:4fr 8fr;gap:72px;align-items:start}
+.faq-side{position:sticky;top:110px}
+.faq-side .btn{margin-top:30px}
+.qa{border-top:1px solid var(--line)}
+.qa:last-child{border-bottom:1px solid var(--line)}
+.qa summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 4px;font-size:20px;font-weight:700;color:var(--night);line-height:1.35}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary .pm{width:32px;height:32px;border-radius:50%;border:1.5px solid #b9c6e6;position:relative;flex:none;transition:background .2s,transform .3s}
+.qa summary .pm::before,.qa summary .pm::after{content:"";position:absolute;inset:0;margin:auto;width:12px;height:2px;background:var(--night);border-radius:2px}
+.qa summary .pm::after{transform:rotate(90deg);transition:transform .3s}
+.qa[open] summary .pm{background:var(--brand);border-color:var(--brand)}
+.qa[open] summary .pm::before,.qa[open] summary .pm::after{background:#fff}
+.qa[open] summary .pm::after{transform:rotate(0)}
+.qa .a{padding:0 4px 26px;max-width:40em;font-size:17px;color:var(--ink2)}
+
+/* ---------- FINAL CTA ---------- */
+.final{padding-block:150px;overflow:hidden;isolation:isolate;background:radial-gradient(800px 500px at 25% 50%,rgba(37,99,235,.40),transparent 65%),radial-gradient(700px 460px at 80% 40%,rgba(139,92,246,.38),transparent 65%),linear-gradient(180deg,#151a52,#0c0f38)}
+.final svg.echo{position:absolute;inset-inline:-5%;width:110%;bottom:-20px;z-index:-1;opacity:.55;overflow:visible}
+.final svg.echo path{fill:none;stroke:#cfe0ff;stroke-width:3;vector-effect:non-scaling-stroke;stroke-linecap:round;filter:drop-shadow(0 0 8px #3b82f6) drop-shadow(0 0 28px #3b82f6)}
+.final h2{font-size:clamp(40px,6.6vw,104px);max-width:11em}
+.final .btn{margin-top:44px;min-height:66px;padding:0 54px;font-size:21px}
+
+/* ---------- FOOTER ---------- */
+footer{background:var(--abyss);padding-block:80px 36px;border-top:1px solid rgba(125,176,255,.2);font-size:15.5px}
+.f-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr;gap:48px}
+footer img{height:50px;width:auto;display:block}
+.f-tag{margin-top:16px;font-size:20px;font-weight:700;color:#fff;max-width:11em;line-height:1.35}
+footer h5{font-size:15px;font-weight:700;color:#9cc2ff;margin-bottom:16px}
+footer li{margin-bottom:10px}
+footer a:hover{color:#fff;text-decoration:underline}
+footer address{font-style:normal;line-height:1.9}
+.f-bot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 30px;margin-top:60px;padding-top:24px;border-top:1px solid rgba(125,176,255,.2);font-size:14.5px}
+.f-bot nav{display:flex;gap:24px;flex-wrap:wrap}
+
+/* scroll reveal as enhancement only */
+.js .sr{opacity:0;transform:translateY(28px);transition:opacity .8s,transform .8s cubic-bezier(.2,.7,.2,1)}
+.js .sr.in{opacity:1;transform:none}
+
+/* ---------- MOBILE ---------- */
+@media (max-width:980px){
+  .nav-links,.nav-login,.nav-end .desk{display:none}
+  .burger{display:grid}
+  .nav .wrap{gap:12px}
+  .nav-end{gap:10px}
+  .m-menu{display:none;position:fixed;inset:72px 0 0 0;z-index:49;background:rgba(8,18,54,.98);padding:24px 20px 40px;overflow:auto}
+  .m-menu[data-open="true"]{display:block}
+  .m-menu a.big{display:block;padding:16px 0;border-bottom:1px solid rgba(125,176,255,.2);font-size:22px;font-weight:800;color:#fff}
+  .m-menu .doms-m{display:flex;flex-wrap:wrap;gap:8px;padding:16px 0}
+  .m-menu .doms-m a{padding:8px 14px;border:1px solid rgba(160,200,255,.3);border-radius:999px;font-size:15px}
+  .hero{padding-block:36px 120px}
+  .video .cap span:last-child{display:none}
+  .hero-grid{grid-template-columns:1fr;gap:60px}
+  h1{font-size:clamp(44px,12.4vw,56px);margin-block:14px 22px}
+  .hero-cta .btn-primary{width:100%}
+  .stage{min-height:560px}
+  .tilt{width:min(100% - 48px,350px);transform:rotateY(10deg) rotateX(5deg) rotateZ(-2deg)}
+  .sheet.s1{transform:translate3d(-30px,20px,-70px) rotateZ(5deg)}
+  .sheet.s2{transform:translate3d(-56px,38px,-150px) rotateZ(10deg)}
+  .chip{inset-inline-start:-14px}
+  .sec,.paper{padding-block:80px}
+  .steps{grid-template-columns:1fr;margin-top:44px;gap:44px}
+  .steps::before{inset-inline:auto;inset-inline-start:6px;top:20px;bottom:20px;width:2px;height:auto;background:linear-gradient(180deg,#7db0ff,rgba(125,176,255,.1))}
+  .step{padding-inline:40px 0}
+  .step .dot{top:34px}
+  .step .num{font-size:84px;height:1.05em;margin-bottom:0}
+  .step h3{margin-top:6px;font-size:24px}
+  .signer{grid-template-columns:1fr;gap:36px;margin-top:80px}
+  .signer .vid{order:-1}
+  .play{width:76px;height:76px}.play svg{width:28px;height:28px}
+  .bento{grid-template-columns:1fr;gap:14px;margin-top:40px}
+  .bento>*{grid-column:auto!important}
+  .b-a{min-height:0}
+  .pipe{grid-template-columns:1fr;margin-top:44px;gap:0}
+  .pipe li{text-align:start;padding-bottom:28px}
+  .node{flex-direction:row;align-items:center;flex-wrap:wrap;gap:6px 16px}
+  .node small{flex-basis:100%;max-width:none;padding-inline-start:46px;text-align:start;margin-top:-4px}
+  .pipe li:not(:last-child)::after{top:34px;inset-inline-start:14px;width:3px;height:calc(100% - 28px);background:#7db0ff!important}
+  .pipe li:nth-child(3)::after{background:linear-gradient(180deg,#7db0ff,#4ade80)!important}
+  .pipe li:nth-child(4)::after,.pipe li:nth-child(5)::after{background:repeating-linear-gradient(180deg,rgba(199,209,234,.55) 0 8px,transparent 8px 16px)!important;width:2px}
+  .glass{margin-top:36px}
+  .glass-h{display:none}
+  .row{grid-template-columns:1fr auto;padding:16px 18px;gap:2px 12px;font-size:16px}
+  .row>:nth-child(2){grid-column:1;color:#aebbdd;font-size:14.5px;grid-row:2}
+  .row>:nth-child(3){grid-column:2;grid-row:1/3}
+  .dom{flex-direction:column;gap:6px;padding-block:16px}
+  .dom span{text-align:start}
+  .dom b{-webkit-text-stroke-width:1.5px}
+  .plans{grid-template-columns:1fr;margin-top:40px}
+  .plan{padding:28px 24px}
+  .plan .btn{align-self:stretch}
+  .inc{grid-template-columns:1fr}
+  .faq-grid{grid-template-columns:1fr;gap:36px}
+  .faq-side{position:static}
+  .qa summary{font-size:18px}
+  .final{padding-block:90px 120px}
+  .final .btn{width:100%}
+  .f-grid{grid-template-columns:1fr 1fr;gap:36px 24px}
+  .f-grid>:first-child{grid-column:1/-1}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .marq{overflow-x:auto}
+  .js .sr{opacity:1;transform:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5Z" fill="currentColor"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M8 13h8M8 17h5"/></g></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></g></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></g></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></g></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14a6 6 0 0 1 3.5 6"/></g></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></g></symbol>
+  <symbol id="i-device" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="14" height="11" rx="2"/><path d="M6 19h6"/><rect x="15" y="9" width="7" height="12" rx="2"/></g></symbol>
+  <symbol id="i-trail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="6" cy="19" r="2"/><path d="M11 5h10M11 12h10M11 19h6"/></g></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+</svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Signiv"><img src="../assets/signiv-logo-horizontal-dark.svg" alt="Signiv"></a>
+    <nav class="nav-links" aria-label="ראשי">
+      <a href="#how">איך זה עובד</a>
+      <a href="#benefits">יתרונות</a>
+      <a href="#pricing">מחירים</a>
+      <div class="dd" id="dd">
+        <button class="dd-btn" aria-expanded="false" aria-controls="dd-panel">תחומים <svg><use href="#i-chev"/></svg></button>
+        <div class="dd-panel" id="dd-panel">
+          <a href="#domains">רואי חשבון</a><a href="#domains">פיננסים</a><a href="#domains">משאבי אנוש</a>
+          <a href="#domains">אקדמיה וחינוך</a><a href="#domains">נדל"ן</a><a href="#domains">עולם הרכב</a>
+          <a href="#domains">אחזקה וניקיון</a><a href="#domains">עורכי דין</a><a href="#domains">אנרגיה</a>
+          <a href="#domains">הפקות ובידור</a><a href="#domains">ביטוח ופנסיה</a><a href="#domains">תעשייה וייצור</a><a href="#domains">תיירות</a>
+        </div>
+      </div>
+      <a href="#faq">שאלות נפוצות</a>
+      <a href="#contact">צרו קשר</a>
+    </nav>
+    <div class="nav-end">
+      <a class="nav-login desk" href="#">כניסה</a>
+      <a class="btn btn-primary" href="#signup">הרשמה בחינם</a>
+      <button class="burger" aria-label="תפריט" aria-expanded="false" id="burger"><svg><use href="#i-menu"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="m-menu" id="mmenu">
+  <a class="big" href="#how">איך זה עובד</a>
+  <a class="big" href="#benefits">יתרונות</a>
+  <a class="big" href="#pricing">מחירים</a>
+  <a class="big" href="#domains">תחומים</a>
+  <div class="doms-m">
+    <a href="#domains">רואי חשבון</a><a href="#domains">פיננסים</a><a href="#domains">משאבי אנוש</a><a href="#domains">אקדמיה וחינוך</a><a href="#domains">נדל"ן</a><a href="#domains">עולם הרכב</a><a href="#domains">אחזקה וניקיון</a><a href="#domains">עורכי דין</a><a href="#domains">אנרגיה</a><a href="#domains">הפקות ובידור</a><a href="#domains">ביטוח ופנסיה</a><a href="#domains">תעשייה וייצור</a><a href="#domains">תיירות</a>
+  </div>
+  <a class="big" href="#faq">שאלות נפוצות</a>
+  <a class="big" href="#contact">צרו קשר</a>
+  <a class="big" href="#">כניסה</a>
+</div>
+
+<main id="top">
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <svg class="hero-stroke" viewBox="0 0 240 65" preserveAspectRatio="none" aria-hidden="true">
+    <path pathLength="1" d="M18 47C53 3 12 69 63 31S62 69 83 41 113 17 106 41 107 56 123 38 131 19 135 43 163 56 180 24M43 54c47 12 88-1 155-5M156 46c17-1 35-4 63-17"/>
+  </svg>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow rv"><i></i>מבצע עד סוף 2027 ללא עלות</div>
+      <h1 class="rv d1">חתימה דיגיטלית על מסמכים, <em>מכל מקום</em></h1>
+      <p class="sub rv d2">שולחים מסמך לחתימה, והלקוחות חותמים מהנייד בדקה, בלי להדפיס ובלי להתקין כלום.</p>
+      <div class="hero-cta rv d3" id="signup">
+        <a class="btn btn-primary" href="#signup">הרשמה בחינם <svg><use href="#i-arrow"/></svg></a>
+        <a class="link-quiet" href="#how"><svg><use href="#i-play"/></svg> ראו איך זה עובד</a>
+      </div>
+      <ul class="trust rv d4">
+        <li><svg><use href="#i-bolt"/></svg>ללא התקנה</li>
+        <li><svg><use href="#i-device"/></svg>מכל מכשיר</li>
+        <li><svg><use href="#i-trail"/></svg>תיעוד של תהליך החתימה</li>
+      </ul>
+    </div>
+
+    <div class="stage" id="stage" aria-label="הדגמה: הסכם שירות נחתם בחתימה בכתב יד">
+      <div class="tilt" id="tilt">
+        <div class="sheet s2"></div>
+        <div class="sheet s1"></div>
+        <div class="doc">
+          <div class="doc-top">
+            <svg class="ic"><use href="#i-doc"/></svg>
+            <div><b>הסכם שירות</b><small>מסמך לחתימה</small></div>
+            <div class="pills"><span class="pill sent">נשלח לחתימה</span><span class="pill done">נחתם</span></div>
+          </div>
+          <h4>1. הצדדים להסכם</h4>
+          <i class="ph" style="width:100%"></i><i class="ph" style="width:86%"></i><i class="ph" style="width:64%"></i>
+          <h4>2. תיאור השירות</h4>
+          <i class="ph" style="width:100%"></i><i class="ph" style="width:92%"></i><i class="ph" style="width:70%"></i>
+          <h4>3. אישור וחתימה</h4>
+          <div class="sigfield">
+            <span class="lbl">חתמו כאן באצבע</span>
+            <svg class="tick"><use href="#i-check"/></svg>
+            <svg class="sig" viewBox="0 0 240 65" aria-hidden="true"><path d="M18 47C53 3 12 69 63 31S62 69 83 41 113 17 106 41 107 56 123 38 131 19 135 43 163 56 180 24M43 54c47 12 88-1 155-5M156 46c17-1 35-4 63-17" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg>
+            <span class="who">דנה לוי</span>
+          </div>
+          <div class="ring"></div>
+          <div class="seal" role="img" aria-label="נחתם"><div><svg><use href="#i-check"/></svg><b>נחתם</b></div></div>
+          <div class="chip"><i></i>דנה לוי חתמה, עותק חתום נשלח במייל</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW ================= -->
+<section class="sec sec-dark" id="how">
+  <div class="glowline"></div>
+  <div class="wrap">
+    <div class="how-top sr">
+      <span class="kicker">איך זה עובד</span>
+      <h2>שלושה צעדים לשולח. <em>דקה לחותם.</em></h2>
+    </div>
+    <ol class="steps">
+      <li class="step sr"><span class="num"><bdi>01</bdi></span><span class="dot"></span><h3>מעלים מסמך</h3><p>מעלים קובץ מהמחשב, או מצלמים מהנייד ומעלים את התמונה כמסמך.</p></li>
+      <li class="step sr"><span class="num"><bdi>02</bdi></span><span class="dot"></span><h3>מגדירים מי חותם ואיפה</h3><p>בוחרים את החותמים וממקמים את שדה החתימה בדיוק במקום שצריך.</p></li>
+      <li class="step sr"><span class="num"><bdi>03</bdi></span><span class="dot"></span><h3>שולחים ועוקבים</h3><p>שולחים בלחיצה, ורואים ברשימה מתי המסמך נשלח, נצפה ונחתם.</p></li>
+    </ol>
+
+    <div class="signer">
+      <div class="sr">
+        <span class="kicker">מהצד של החותם</span>
+        <h3>החותם לא מתקין כלום. הוא פשוט חותם.</h3>
+        <ol>
+          <li>מקבלים קישור ב-SMS או במייל</li>
+          <li>הקישור נפתח ישר בדפדפן</li>
+          <li>חותמים באצבע על המסך</li>
+          <li class="fin"><b>לוחצים "אשר וחתום"</b></li>
+        </ol>
+      </div>
+      <div class="vid sr">
+        <a class="video" href="#" aria-label="צפו בסרטון ההסבר, 40 שניות">
+          <img src="../assets/cover-landscape.jpg" alt="טלפון עם מסמך הסכם שירות, חתימה של דנה לוי וכפתור אשר וחתום">
+          <span class="play"><svg><use href="#i-play"/></svg></span>
+          <span class="cap"><span>צפו ב-40 שניות</span><span>איך חותמים מהנייד</span></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BENEFITS ================= -->
+<section class="sec sec-mid" id="benefits">
+  <div class="wrap">
+    <div class="sr">
+      <span class="kicker">יתרונות</span>
+      <h2>הכול כדי שהחתימה תהיה <em>החלק הקל.</em></h2>
+    </div>
+    <div class="bento">
+      <article class="bx b-a sr">
+        <h3>פחות התעסקות, יותר עבודה שמתקדמת.</h3>
+        <p>המסמך יוצא, הלקוח חותם, ואתם ממשיכים הלאה.</p>
+        <div class="strike"><span>הדפסה</span><span>סריקה</span><span>שליחה בדואר</span><span>מרדף אחרי חתימה</span></div>
+      </article>
+      <article class="bx b-b sr"><svg class="i"><use href="#i-phone"/></svg><h3>חתימה גם מהנייד</h3><p>החותם פותח קישור בדפדפן וחותם באצבע. בלי אפליקציה.</p></article>
+      <article class="bx b-c sr"><svg class="i"><use href="#i-eye"/></svg><h3>רואים את מצב המסמך</h3><p>נשלח, נצפה, נחתם: הסטטוס תמיד מול העיניים.</p></article>
+      <article class="bx b-d sr"><svg class="i"><use href="#i-copy"/></svg><h3>תבניות לשימוש חוזר</h3><p>מסמך שנשלח שוב ושוב? שומרים פעם אחת ושולחים מתי שצריך.</p></article>
+      <article class="bx b-e sr"><h3>ציר זמן עם תיעוד</h3><p>כל שלב בתהליך החתימה נרשם ונשאר זמין.</p>
+        <div class="mini-tl"><div><i></i>המסמך נשלח</div><div><i></i>המסמך נצפה</div><div><i></i>המסמך נחתם</div></div></article>
+      <article class="bx b-f sr">
+        <div class="tx"><h3>אנשי הקשר במקום אחד</h3><p>ספר אנשי קשר שמחכה לשליחה הבאה, בלי להקליד את אותם פרטים שוב.</p></div>
+        <div class="avs" aria-hidden="true"><span style="background:#2563eb">ד</span><span style="background:#1c3fb5">א</span><span style="background:#3b82f6">נ</span><span style="background:#172f86">ר</span><span style="background:#5b95ff">ע</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TRACK ================= -->
+<section class="sec track" id="track">
+  <div class="glowline"></div>
+  <div class="wrap">
+    <div class="sr">
+      <span class="kicker">מעקב</span>
+      <h2>לא צריך לנחש <em>איפה המסמך עומד.</em></h2>
+      <p class="lead">כל מסמך נמצא בשלב אחד, והשלב כתוב במילים. לוחצים על שלב כדי לראות אילו מסמכים נמצאים בו.</p>
+    </div>
+    <ol class="pipe sr" id="pipe">
+      <li><button class="node" data-f="draft" aria-pressed="false"><span class="d"></span><span class="st">טיוטה</span><small>עוד לא נשלח</small></button></li>
+      <li><button class="node" data-f="sent" aria-pressed="false"><span class="d"></span><span class="st">נשלח לחתימה</span><small>הקישור בדרך לחותם</small></button></li>
+      <li><button class="node" data-f="viewed" aria-pressed="false"><span class="d"></span><span class="st">נצפה</span><small>החותם פתח את המסמך</small></button></li>
+      <li><button class="node" data-f="signed" aria-pressed="false"><span class="d"><svg><use href="#i-check"/></svg></span><span class="st">נחתם</span><small>החתימה הושלמה</small></button></li>
+      <li><button class="node" data-f="rejected" aria-pressed="false"><span class="d"></span><span class="st">נדחה</span><small>החותם לא אישר</small></button></li>
+      <li><button class="node" data-f="expired" aria-pressed="false"><span class="d"></span><span class="st">פג תוקף</span><small>עבר זמן החתימה</small></button></li>
+    </ol>
+    <div class="glass sr" id="glass">
+      <div class="glass-h"><span>שם המסמך</span><span>איש קשר</span><span>סטטוס</span></div>
+      <div class="row" data-s="draft" style="--bg:#eef2fa;--fg:#4d5a78"><b>מסמך לפתיחת תיק</b><span>ישראל ישראלי</span><span class="pill2">טיוטה</span></div>
+      <div class="row" data-s="sent" style="--bg:#dbeafe;--fg:#1d4ed8"><b>אישור פרטי לקוח</b><span>דנה לוי</span><span class="pill2">נשלח לחתימה</span></div>
+      <div class="row" data-s="viewed" style="--bg:#fef3c7;--fg:#b45309"><b>הסכם שירות</b><span>איתי כהן</span><span class="pill2">נצפה</span></div>
+      <div class="row" data-s="signed" style="--bg:#dcfce7;--fg:#15803d"><b>אישור קבלת מסמך</b><span>נועה ישראלי</span><span class="pill2">נחתם</span></div>
+      <div class="row" data-s="rejected" style="--bg:#ffe4e6;--fg:#be123c"><b>טופס עדכון פרטים</b><span>אור לוי</span><span class="pill2">נדחה</span></div>
+      <div class="row" data-s="expired" style="--bg:#e1e7f3;--fg:#4a5878"><b>טופס הרשאה</b><span>רוני כהן</span><span class="pill2">פג תוקף</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DOMAINS ================= -->
+<section class="sec sec-dark" id="domains">
+  <div class="glowline"></div>
+  <div class="wrap">
+    <div class="sr">
+      <span class="kicker">תחומים</span>
+      <h2>בכל משרד שמסמכים <em>עוברים בו.</em></h2>
+    </div>
+    <div class="doms sr">
+      <div class="dom"><b>משרדי רואי חשבון</b><span>אישורי לקוח, הרשאות ופתיחת תיק</span></div>
+      <div class="dom"><b>עורכי דין</b><span>הסכמים והרשאות שחוזרים ללא הדפסה</span></div>
+      <div class="dom"><b>נדל"ן</b><span>טפסים והסכמים מול לקוחות, גם מהשטח</span></div>
+      <div class="dom"><b>משאבי אנוש</b><span>טפסי קליטה ועדכון פרטים</span></div>
+      <div class="dom"><b>עסקים קטנים</b><span>הסכמי שירות וטפסים, מהר ובלי ניירת</span></div>
+    </div>
+  </div>
+  <div class="marq" aria-label="תחומים נוספים">
+    <div class="marq-t" id="marq">
+      <a href="#">רואי חשבון</a><a href="#">פיננסים</a><a href="#">משאבי אנוש</a><a href="#">אקדמיה וחינוך</a><a href="#">נדל"ן</a><a href="#">עולם הרכב</a><a href="#">אחזקה וניקיון</a><a href="#">עורכי דין</a><a href="#">אנרגיה</a><a href="#">הפקות ובידור</a><a href="#">ביטוח ופנסיה</a><a href="#">תעשייה וייצור</a><a href="#">תיירות</a>
+      <a href="#" aria-hidden="true" tabindex="-1">רואי חשבון</a><a href="#" aria-hidden="true" tabindex="-1">פיננסים</a><a href="#" aria-hidden="true" tabindex="-1">משאבי אנוש</a><a href="#" aria-hidden="true" tabindex="-1">אקדמיה וחינוך</a><a href="#" aria-hidden="true" tabindex="-1">נדל"ן</a><a href="#" aria-hidden="true" tabindex="-1">עולם הרכב</a><a href="#" aria-hidden="true" tabindex="-1">אחזקה וניקיון</a><a href="#" aria-hidden="true" tabindex="-1">עורכי דין</a><a href="#" aria-hidden="true" tabindex="-1">אנרגיה</a><a href="#" aria-hidden="true" tabindex="-1">הפקות ובידור</a><a href="#" aria-hidden="true" tabindex="-1">ביטוח ופנסיה</a><a href="#" aria-hidden="true" tabindex="-1">תעשייה וייצור</a><a href="#" aria-hidden="true" tabindex="-1">תיירות</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRICING (paper) ================= -->
+<section class="paper" id="pricing">
+  <div class="paper-top"></div>
+  <div class="wrap">
+    <div class="sr">
+      <span class="kicker">מחירים</span>
+      <h2>חבילה אחת שמתאימה <em>לעבודה שלכם.</em></h2>
+      <p class="lead">מתחילים בלי עלות, ורואים בעצמכם איך זה עובד עם הלקוחות.</p>
+    </div>
+    <div class="plans">
+      <div class="plan sr">
+        <h3>30 יום נסיון ללא עלות</h3>
+        <p>נרשמים, שולחים מסמך ראשון ובודקים איך זה מרגיש מצד הלקוח.</p>
+        <a class="btn btn-light" href="#signup" style="margin-top:36px">הרשמה</a>
+      </div>
+      <div class="plan rec sr">
+        <span class="badge">מומלצת</span>
+        <h3>מבצע עד סוף 2027 ללא עלות</h3>
+        <div class="after"><span>אחרי המבצע:</span><span class="amt"><span class="ltr">50</span><span class="cur">₪</span></span><span>+ מע"מ לחודש</span></div>
+        <ul class="inc">
+          <li><svg><use href="#i-check"/></svg>שליחת מסמכים מהמחשב ומהנייד</li>
+          <li><svg><use href="#i-check"/></svg>חתימה בלי חשבון</li>
+          <li><svg><use href="#i-check"/></svg>מייל אוטומטי כשנחתם</li>
+          <li><svg><use href="#i-check"/></svg>תבניות לשליחה חוזרת</li>
+          <li><svg><use href="#i-check"/></svg>ספר אנשי קשר</li>
+          <li><svg><use href="#i-check"/></svg>מעקב אחרי סטטוס</li>
+          <li><svg><use href="#i-check"/></svg>הורדת המסמך החתום</li>
+          <li><svg><use href="#i-check"/></svg>העלאת תמונה כמסמך</li>
+          <li><svg><use href="#i-check"/></svg>מיקום החתימה בדיוק</li>
+        </ul>
+        <a class="btn btn-primary" href="#signup" style="align-self:flex-start">הרשמה בחינם <svg><use href="#i-arrow"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ (paper) ================= -->
+<section class="paper" id="faq" style="padding-top:20px">
+  <div class="wrap faq-grid">
+    <div class="faq-side sr">
+      <span class="kicker">שאלות נפוצות</span>
+      <h2>טוב ששאלתם.</h2>
+      <p class="lead">עוד שאלה? נשמח לענות.</p>
+      <a class="btn btn-light" href="#contact">צרו קשר</a>
+    </div>
+    <div class="faq-list sr">
+      <details class="qa" open><summary>מה ההבדל בין חתימה דיגיטלית לחתימה אלקטרונית?<span class="pm"></span></summary><div class="a">בשיחה יומיומית משתמשים בשני המונחים לאותו דבר: חתימה על מסמך במסך במקום על נייר. ב-Signiv שולחים מסמך, הלקוח חותם עליו בדפדפן, ונשמר תיעוד של תהליך החתימה. לשאלה על סוג החתימה הנדרש במסמך מסוים כדאי להתייעץ עם איש מקצוע.</div></details>
+      <details class="qa"><summary>איך שולחים מסמך לחתימה דיגיטלית?<span class="pm"></span></summary><div class="a">מעלים את המסמך, מגדירים מי חותם ואיפה על המסמך, ושולחים. החותם מקבל קישור ב-SMS או במייל.</div></details>
+      <details class="qa"><summary>האם אפשר לחתום על PDF מהנייד?<span class="pm"></span></summary><div class="a">כן. החותם פותח את הקישור בדפדפן בנייד, רואה את המסמך וחותם באצבע.</div></details>
+      <details class="qa"><summary>האם החותם צריך להתקין משהו או להירשם?<span class="pm"></span></summary><div class="a">לא. אין צורך באפליקציה, והחותם לא צריך חשבון. הקישור נפתח ישר בדפדפן.</div></details>
+      <details class="qa"><summary>באילו מכשירים אפשר לחתום?<span class="pm"></span></summary><div class="a">בכל מכשיר עם דפדפן: נייד, טאבלט או מחשב.</div></details>
+      <details class="qa"><summary>איך אני יודע שהמסמך נחתם?<span class="pm"></span></summary><div class="a">הסטטוס מתעדכן ברשימת המסמכים, ומגיע מייל אוטומטי כשהמסמך נחתם. אפשר גם להוריד את המסמך החתום.</div></details>
+      <details class="qa"><summary>מה קורה אם החותם לא חותם?<span class="pm"></span></summary><div class="a">המסמך לא יוצג כנחתם עד להשלמת החתימה. אפשר לבדוק ברשימת המסמכים אם הקישור נשלח או נצפה.</div></details>
+      <details class="qa"><summary>איפה נשמרים המסמכים?<span class="pm"></span></summary><div class="a">המסמכים, כולל המסמכים החתומים, זמינים ברשימת המסמכים בחשבון שלכם, ואפשר להוריד אותם.</div></details>
+      <details class="qa"><summary>איך מתחילים?<span class="pm"></span></summary><div class="a">נרשמים למערכת, מעלים מסמך, מגדירים את החותמים ואת שדות החתימה ושולחים במייל.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FINAL CTA ================= -->
+<section class="final">
+  <svg class="echo" viewBox="0 0 240 65" preserveAspectRatio="none" aria-hidden="true"><path d="M18 47C53 3 12 69 63 31S62 69 83 41 113 17 106 41 107 56 123 38 131 19 135 43 163 56 180 24M43 54c47 12 88-1 155-5M156 46c17-1 35-4 63-17"/></svg>
+  <div class="wrap">
+    <h2 class="sr">מוכנים לשלוח את המסמך הראשון?</h2>
+    <a class="btn btn-primary" href="#signup">הרשמה בחינם <svg><use href="#i-arrow"/></svg></a>
+  </div>
+</section>
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="f-grid">
+      <div>
+        <img src="../assets/signiv-logo-horizontal-dark.svg" alt="Signiv">
+        <p class="f-tag">מסמכים עוברים. העבודה מתקדמת.</p>
+      </div>
+      <div>
+        <h5>קישורים</h5>
+        <ul>
+          <li><a href="#">חתימה דיגיטלית על מסמכים</a></li>
+          <li><a href="#">חתימה מרחוק מהנייד</a></li>
+          <li><a href="#">סוגי חתימה אלקטרונית</a></li>
+          <li><a href="#">חוק החתימה האלקטרונית</a></li>
+          <li><a href="#">איך לחתום על PDF</a></li>
+          <li><a href="#pricing">מחירים</a></li>
+          <li><a href="#contact">צרו קשר</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>תחומים</h5>
+        <ul>
+          <li><a href="#domains">רואי חשבון</a></li><li><a href="#domains">עורכי דין</a></li><li><a href="#domains">נדל"ן</a></li><li><a href="#domains">משאבי אנוש</a></li><li><a href="#domains">ביטוח ופנסיה</a></li><li><a href="#domains">תעשייה וייצור</a></li><li><a href="#domains">תיירות</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>לפרטים נוספים</h5>
+        <address>
+          שעות פעילות: א'-ה' <span class="ltr">9:00-17:00</span><br>
+          תוצרת הארץ 3, פתח תקווה<br>
+          <a href="mailto:sales@signiv.co.il"><span class="ltr">sales@signiv.co.il</span></a><br>
+          <a href="mailto:support@signiv.co.il"><span class="ltr">support@signiv.co.il</span></a>
+        </address>
+      </div>
+    </div>
+    <div class="f-bot">
+      <nav><a href="#">תנאי שימוש</a><a href="#">מדיניות פרטיות</a><a href="#">הצהרת נגישות</a></nav>
+      <span>© <span class="ltr">2026</span> Signiv</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.documentElement.classList.add('js');
+/* dropdown + mobile menu */
+const dd=document.getElementById('dd'),ddb=dd.querySelector('button');
+ddb.addEventListener('click',e=>{const o=dd.dataset.open==='true';dd.dataset.open=!o;ddb.setAttribute('aria-expanded',!o);e.stopPropagation()});
+document.addEventListener('click',e=>{if(!dd.contains(e.target)){dd.dataset.open='false';ddb.setAttribute('aria-expanded','false')}});
+const bg=document.getElementById('burger'),mm=document.getElementById('mmenu');
+bg.addEventListener('click',()=>{const o=mm.dataset.open==='true';mm.dataset.open=!o;bg.setAttribute('aria-expanded',!o)});
+mm.addEventListener('click',e=>{if(e.target.closest('a')){mm.dataset.open='false'}});
+/* status filter */
+const glass=document.getElementById('glass');
+document.querySelectorAll('.node').forEach(n=>n.addEventListener('click',()=>{
+  const on=n.getAttribute('aria-pressed')==='true';
+  document.querySelectorAll('.node').forEach(x=>x.setAttribute('aria-pressed','false'));
+  if(on){delete glass.dataset.f}else{n.setAttribute('aria-pressed','true');glass.dataset.f=n.dataset.f}
+}));
+/* doc tilt follows pointer */
+const rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(!rm && matchMedia('(pointer:fine)').matches){
+  const st=document.getElementById('stage'),t=document.getElementById('tilt');
+  st.addEventListener('pointermove',e=>{const r=st.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+    t.style.transform=`rotateY(${14+x*-14}deg) rotateX(${7+y*-10}deg) rotateZ(-3deg)`});
+  st.addEventListener('pointerleave',()=>{t.style.transform=''});
+}
+/* reveal as enhancement */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.sr').forEach(el=>io.observe(el));
+/* safety: reveal everything after 2.5s in case observer never fires (print, headless) */
+setTimeout(()=>document.querySelectorAll('.sr').forEach(el=>el.classList.add('in')),2500);
+</script>
+</body>
+</html>
