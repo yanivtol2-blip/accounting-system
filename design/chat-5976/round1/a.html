@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signiv | חתימה דיגיטלית על מסמכים, מכל מקום</title>
+<link rel="stylesheet" href="../assets/fonts/fonts.css">
+<style>
+:root{
+  --blue:#2563eb; --blue-h:#1d4ed8; --blue-l:#3b82f6;
+  --ink:#0f1f4d; --ink-2:#172f86; --ink-3:#1c3fb5;
+  --bg:#f6f8fd; --paper:#fbfcff; --white:#fff; --line:#e1e7f3; --mute:#4d5a78;
+  --green:#16a34a; --green-l:#22c55e;
+  --shadow:0 1px 2px rgba(15,31,77,.05),0 12px 32px -8px rgba(15,31,77,.12),0 40px 80px -24px rgba(15,31,77,.16);
+  --wrap:1240px;
+  --pad:clamp(20px,5vw,56px);
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{font-family:Heebo,system-ui,sans-serif;font-size:16px;line-height:1.65;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+ul{list-style:none;padding:0}
+.wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:var(--pad)}
+:focus-visible{outline:3px solid var(--blue-l);outline-offset:3px;border-radius:6px}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:56px;padding:0 30px;border-radius:12px;font-weight:700;font-size:18px;border:1.5px solid transparent;transition:transform .2s,background .2s,box-shadow .2s;white-space:nowrap}
+.btn-p{background:var(--blue);color:#fff;box-shadow:0 10px 24px -8px rgba(37,99,235,.55)}
+.btn-p:hover{background:var(--blue-h);transform:translateY(-2px)}
+.btn-s{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn-s:hover{background:var(--ink);color:#fff}
+.btn svg{width:20px;height:20px;transition:transform .2s}
+.btn:hover svg{transform:translateX(-4px)}
+.link-q{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--mute);border-bottom:1.5px solid var(--line);padding-bottom:2px;transition:color .2s,border-color .2s}
+.link-q:hover{color:var(--ink);border-color:var(--ink)}
+
+/* nav */
+header.nav{position:sticky;top:0;z-index:50;background:rgba(246,248,253,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:32px;height:76px}
+.nav .logo img{height:32px;display:block}
+.nav-links{display:flex;gap:26px;margin-inline-start:12px;font-weight:500;font-size:15.5px;color:var(--mute)}
+.nav-links a,.nav-links summary{padding:8px 0;transition:color .2s;cursor:pointer;list-style:none}
+.nav-links a:hover,.nav-links summary:hover{color:var(--ink)}
+.nav-links summary::-webkit-details-marker{display:none}
+.nav-links summary::after{content:"";display:inline-block;width:7px;height:7px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(45deg) translateY(-2px);margin-inline-start:8px}
+.dd{position:relative}
+.dd-panel{position:absolute;top:100%;inset-inline-start:-24px;margin-top:6px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:20px 24px;display:grid;grid-template-columns:repeat(3,auto);gap:2px 36px;width:max-content;color:var(--ink)}
+.dd-panel a{padding:7px 0;font-size:15px;color:var(--mute)}
+.dd-panel a:hover{color:var(--blue)}
+.nav-end{margin-inline-start:auto;display:flex;align-items:center;gap:22px}
+.nav-end .login{font-weight:600;font-size:15.5px;color:var(--ink)}
+.nav-end .btn{min-height:46px;padding:0 22px;font-size:16px}
+.burger{display:none;width:48px;height:48px;border:1.5px solid var(--line);background:#fff;border-radius:12px;align-items:center;justify-content:center}
+.burger span,.burger span::before,.burger span::after{display:block;width:20px;height:2px;background:var(--ink);border-radius:2px;position:relative;content:""}
+.burger span::before{position:absolute;top:-6px}.burger span::after{position:absolute;top:6px}
+.mpanel{display:none}
+
+/* section marker */
+.mark{display:flex;align-items:center;gap:16px;font-size:14px;font-weight:600;color:var(--mute);margin-bottom:clamp(28px,5vw,56px)}
+.mark b{font-weight:800;color:var(--ink);font-size:15px}
+.mark i{flex:1;height:1px;background:var(--ink);opacity:.18}
+.mark span{font-weight:300;font-size:14px;letter-spacing:0;color:var(--blue)}
+section{position:relative}
+.h2{font-size:clamp(38px,6.2vw,84px);line-height:1.02;font-weight:900;letter-spacing:0;color:var(--ink);text-wrap:balance}
+.h2 em{font-style:normal;font-weight:200;color:var(--mute)}
+.lead{font-size:clamp(18px,1.6vw,21px);color:var(--mute);max-width:46ch;font-weight:400}
+
+/* ink strokes: visible by default, drawn only when JS is present */
+.ink{fill:none;stroke:var(--ink);stroke-linecap:round;stroke-linejoin:round}
+.js .draw{stroke-dasharray:1;stroke-dashoffset:1}
+.js .draw.in{stroke-dashoffset:0;transition:stroke-dashoffset var(--d,2.4s) cubic-bezier(.45,.05,.25,1) var(--dl,0s)}
+
+/* hero */
+.hero{padding-block:clamp(36px,6vw,84px) clamp(48px,7vw,100px);background:
+  linear-gradient(180deg,transparent 0,transparent calc(100% - 1px),rgba(15,31,77,.05) 100%),
+  radial-gradient(900px 520px at 8% 20%,#fff 0,transparent 70%),var(--bg);overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 63px,rgba(15,31,77,.045) 63px 64px);mask-image:linear-gradient(90deg,transparent 0,#000 60%);-webkit-mask-image:linear-gradient(270deg,#000 30%,transparent 100%);pointer-events:none}
+.hero .wrap{position:relative}
+.eyebrow{display:flex;align-items:center;gap:14px;font-weight:600;font-size:15px;color:var(--mute);margin-bottom:clamp(20px,3vw,36px)}
+.eyebrow::before{content:"";width:44px;height:1.5px;background:var(--ink)}
+h1{font-size:clamp(52px,9.2vw,132px);line-height:.94;font-weight:900;letter-spacing:0;color:var(--ink)}
+h1 span{display:block;opacity:0;transform:translateY(.28em);animation:up .9s cubic-bezier(.2,.7,.2,1) forwards}
+h1 .l1{animation-delay:.05s}
+h1 .l2{font-weight:200;color:var(--mute);padding-inline-start:min(16vw,230px);animation-delay:.2s;font-size:.78em;line-height:1.08}
+h1 .l3{animation-delay:.35s;color:var(--blue)}
+@keyframes up{to{opacity:1;transform:none}}
+.sigline{position:relative;margin-top:calc(clamp(52px,9.2vw,132px)*-.1);pointer-events:none}
+.sigline svg{display:block;width:100%;height:auto;overflow:visible}
+.sigline .seal-wrap{transform-box:fill-box;transform-origin:center}
+.js .seal-wrap{opacity:0;transform:scale(.4)}
+.js .seal-wrap.in{opacity:1;transform:none;transition:opacity .4s ease var(--dl,0s),transform .6s cubic-bezier(.3,1.6,.5,1) var(--dl,0s)}
+.nahtam{position:absolute;inset-inline-end:0;bottom:-34px;text-align:center;width:11%;min-width:110px;font-size:13px;line-height:1.45;color:var(--mute)}
+.nahtam b{display:block;font-size:15px;font-weight:800;color:var(--green)}
+.hero-foot{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,4fr);gap:clamp(28px,6vw,96px);align-items:end;margin-top:clamp(44px,4vw,56px)}
+.hero-foot .lead{font-size:clamp(19px,2vw,25px);color:var(--ink);font-weight:300;line-height:1.5;max-width:34ch}
+.hero-foot .lead strong{font-weight:700}
+.cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:20px 28px;margin-top:30px}
+.trust{display:grid;gap:0;border-top:1.5px solid var(--ink)}
+.trust li{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);font-weight:600;font-size:16px}
+.trust li small{font-weight:300;font-size:13px;color:var(--mute)}
+.trust svg{width:20px;height:20px;flex:none;stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* steps */
+.how{padding-block:clamp(72px,10vw,150px) clamp(40px,6vw,80px);background:var(--white)}
+.how-head{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,4fr);gap:40px;align-items:end}
+.steps{position:relative;margin-top:clamp(36px,5vw,64px);display:grid;grid-template-columns:repeat(3,1fr);gap:0 28px;min-height:380px}
+.steps svg.flow{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.step{position:relative;padding-inline-start:4px;align-self:start}
+.step .dot{position:absolute;width:20px;height:20px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 6px var(--white),0 0 0 7.5px var(--ink);top:0;inset-inline-start:0}
+.step .body{padding-top:44px}
+.step .n{font-size:clamp(80px,9vw,132px);font-weight:200;line-height:.9;color:transparent;-webkit-text-stroke:1.5px var(--ink);display:block;margin-bottom:12px}
+.step h3{font-size:clamp(26px,2.6vw,34px);line-height:1.15;font-weight:800;margin-bottom:10px}
+.step p{color:var(--mute);max-width:30ch}
+.step:nth-child(1){margin-top:26px}
+.step:nth-child(2){margin-top:112px}
+.step:nth-child(3){margin-top:50px}
+
+/* signer */
+.signer{padding-block:clamp(40px,6vw,90px) clamp(72px,10vw,150px);background:var(--white)}
+.signer-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(32px,7vw,110px);align-items:center;border-top:1px solid var(--line);padding-top:clamp(40px,6vw,80px)}
+.stage{position:relative;display:grid;place-items:center;padding:36px 0;min-height:640px}
+.stage::before{content:"";position:absolute;inset:0 6% 0 6%;border-radius:200px 200px 24px 24px;background:linear-gradient(180deg,var(--bg),#eaf0fc);}
+.sheet-back{position:absolute;inset-inline-end:-4%;top:12%;width:230px;height:300px;background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow);transform:rotate(-7deg);padding:20px 18px;display:none}
+.phone{position:relative;width:300px;height:610px;border-radius:44px;background:var(--ink);padding:10px;box-shadow:0 2px 0 #2a3a76 inset,var(--shadow),0 60px 90px -40px rgba(15,31,77,.5)}
+.screen{position:relative;width:100%;height:100%;border-radius:35px;background:#fff;overflow:hidden;display:flex;flex-direction:column}
+.island{position:absolute;top:10px;inset-inline-start:50%;transform:translateX(50%);width:84px;height:24px;border-radius:14px;background:var(--ink);z-index:2}
+[dir=rtl] .island{transform:translateX(50%)}
+.sbar{display:flex;justify-content:space-between;padding:14px 26px 0;font-size:12.5px;font-weight:700;direction:ltr}
+.urlp{margin:14px auto 0;background:#eef2fa;border-radius:12px;padding:6px 16px;font-size:12px;color:var(--mute);display:flex;gap:8px;align-items:center;direction:ltr}
+.urlp svg{width:11px;height:11px;stroke:var(--mute);fill:none;stroke-width:2}
+.doc{flex:1;display:flex;flex-direction:column;margin:14px 14px 0;padding:16px 16px 0;background:var(--paper);border:1px solid var(--line);border-bottom:0;border-radius:12px 12px 0 0;overflow:hidden}
+.doc h4{font-size:16px;font-weight:800;margin-bottom:12px}
+.doc .sk{height:6px;border-radius:3px;background:#e6ecf7;margin-bottom:8px}
+.doc .sec{font-size:11.5px;font-weight:700;margin:14px 0 8px}
+.sigbox{margin-top:auto;margin-bottom:14px;border:1.5px dashed var(--ink-3);border-radius:10px;padding:8px 10px 6px;background:#f3f7ff;transition:background .4s,border-color .4s}
+.sigbox .cap{font-size:11px;font-weight:600;color:var(--blue-h);display:flex;justify-content:space-between;align-items:center}
+.sigbox svg.sg{display:block;width:100%;height:64px}
+.sigbox .who{font-size:10.5px;color:var(--mute)}
+.sigbox.done{background:#effcf3;border:1.5px solid var(--green-l)}
+.sigbox.done .cap{color:var(--green)}
+.okbtn{margin:0 14px 18px;min-height:54px;border:0;border-radius:12px;background:var(--green-l);color:#05260f;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;gap:10px;transition:background .3s,transform .2s;box-shadow:0 8px 18px -8px rgba(22,163,74,.6)}
+.okbtn:hover{transform:translateY(-1px)}
+.okbtn svg{width:20px;height:20px;stroke:#05260f;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.okbtn[disabled]{background:#dcfce7;color:#15803d;box-shadow:none;cursor:default;transform:none}
+.okbtn[disabled] svg{stroke:#15803d}
+.beats{counter-reset:b}
+.beats li{counter-increment:b;display:grid;grid-template-columns:64px 1fr;gap:12px 18px;padding:22px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.beats li:first-child{border-top:1.5px solid var(--ink)}
+.beats li::before{content:counter(b);font-size:44px;font-weight:200;line-height:1;color:var(--blue)}
+.beats h3{font-size:clamp(22px,2.3vw,30px);font-weight:800;line-height:1.2}
+.beats p{grid-column:2;color:var(--mute);margin-top:-6px}
+.beats li:last-child h3{color:var(--ink)}
+.promise{margin-top:26px;display:flex;flex-wrap:wrap;gap:8px 22px;font-weight:600;font-size:15px;color:var(--mute)}
+.promise span::before{content:"";display:inline-block;width:14px;height:1.5px;background:var(--ink);vertical-align:middle;margin-inline-end:10px}
+
+/* benefits */
+.ben{padding-block:clamp(72px,10vw,150px);background:var(--bg)}
+.ben-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(18px,2.4vw,32px)}
+.b{padding-top:22px;border-top:1.5px solid var(--ink)}
+.b h3{font-weight:800;line-height:1.05}
+.b p{color:var(--mute);margin-top:14px;max-width:38ch}
+.b .k{display:block;font-size:13px;font-weight:600;color:var(--blue);margin-bottom:18px}
+.b1{grid-column:span 7}.b1 h3{font-size:clamp(44px,6vw,88px);font-weight:900}.b1 p{font-size:clamp(18px,1.5vw,21px)}
+.b2{grid-column:span 5;border-top-color:var(--blue)}.b2 h3{font-size:clamp(34px,4vw,56px);font-weight:200;color:var(--ink)}
+.b2 h3 strong{font-weight:900}
+.b3,.b4,.b5,.b6{grid-column:span 3;border-top-width:1px;border-top-color:var(--ink)}
+.b3 h3,.b4 h3,.b5 h3,.b6 h3{font-size:clamp(23px,2.2vw,30px)}
+.b4 h3{font-weight:300}.b5 h3{font-weight:800}.b6 h3{font-weight:500}
+.b3,.b4,.b5,.b6{margin-top:clamp(20px,5vw,64px)}
+.b4{margin-top:clamp(40px,8vw,104px)}.b6{margin-top:clamp(40px,8vw,104px)}
+
+/* tracking ledger */
+.track{padding-block:clamp(72px,10vw,150px);background:var(--white)}
+.track-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);align-items:start}
+.track .lead{margin-top:28px}
+.ledger{background:var(--paper);border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow);padding:clamp(22px,3vw,40px);position:relative;transform:rotate(-.6deg)}
+.ledger::before{content:"";position:absolute;inset-block:0;inset-inline-start:clamp(14px,1.6vw,22px);width:1px;background:rgba(190,18,60,.18)}
+.l-top{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:14px;border-bottom:1.5px solid var(--ink)}
+.l-top b{font-size:20px;font-weight:800}
+.l-top small{font-size:13px;color:var(--mute)}
+.filters{display:flex;flex-wrap:wrap;gap:6px 18px;padding:14px 0;border-bottom:1px solid var(--line);font-size:14px}
+.filters button{background:none;border:0;padding:2px 0;color:var(--mute);font-weight:500;border-bottom:1.5px solid transparent}
+.filters button[aria-pressed=true]{color:var(--ink);font-weight:800;border-color:var(--ink)}
+.filters button:hover{color:var(--ink)}
+.rows li{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) auto;gap:4px 18px;align-items:baseline;padding:17px 0;border-bottom:1px dotted #aab6d2;transition:background .2s,padding .2s}
+.rows li:hover{background:linear-gradient(90deg,transparent,rgba(37,99,235,.05),transparent)}
+.rows .doc-n{font-size:clamp(17px,1.5vw,20px);font-weight:700}
+.rows .sgn{color:var(--mute);font-weight:400}
+.st{font-weight:800;font-size:15.5px;padding:0 6px;margin-inline:-6px;color:var(--fg);background:linear-gradient(180deg,transparent 55%,var(--bgc) 55%);white-space:nowrap}
+.st::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--fg);margin-inline-end:8px;vertical-align:1px}
+.s-draft{--fg:#4d5a78;--bgc:#eef2fa}.s-sent{--fg:#1d4ed8;--bgc:#dbeafe}.s-seen{--fg:#b45309;--bgc:#fef3c7}.s-signed{--fg:#15803d;--bgc:#dcfce7}.s-rej{--fg:#be123c;--bgc:#ffe4e6}.s-exp{--fg:#5a6788;--bgc:#e1e7f3}
+.l-foot{padding-top:16px;font-size:13.5px;color:var(--mute);display:flex;justify-content:space-between}
+
+/* fields */
+.fields{padding-block:clamp(72px,10vw,140px);background:var(--bg);overflow:hidden}
+.fields-list li{border-top:1px solid rgba(15,31,77,.2);overflow:hidden}
+.fields-list li:last-child{border-bottom:1px solid rgba(15,31,77,.2)}
+.fields-list a{display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:clamp(6px,1vw,14px) 0;font-size:clamp(40px,8.4vw,128px);font-weight:900;line-height:1.08;letter-spacing:0;transition:transform .5s cubic-bezier(.2,.7,.2,1),color .3s}
+.fields-list li:nth-child(even) a{font-weight:200;color:var(--ink)}
+.fields-list a .ar{width:clamp(28px,4vw,56px);height:auto;flex:none;align-self:center;opacity:.5;transition:opacity .3s}.fields-list a:hover .ar{opacity:1}
+.fields-list a:hover{transform:translateX(-24px);color:var(--blue)}
+.fields-head{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,4fr);gap:40px;align-items:end;margin-bottom:clamp(24px,4vw,48px)}
+
+/* pricing */
+.price{padding-block:clamp(72px,10vw,150px);background:var(--white)}
+.price-grid{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);border:1.5px solid var(--ink);border-radius:20px;overflow:hidden;margin-top:clamp(28px,4vw,56px)}
+.plan{padding:clamp(28px,4vw,56px)}
+.plan.trial{display:flex;flex-direction:column;justify-content:space-between;gap:36px;background:var(--bg);border-inline-end:1.5px solid var(--ink)}
+.plan .tag{font-size:13.5px;font-weight:700;color:var(--mute);margin-bottom:18px;display:flex;gap:10px;align-items:center}
+.plan.rec .tag{color:var(--blue-h)}
+.plan.rec .tag b{background:var(--ink);color:#fff;border-radius:6px;padding:1px 10px;font-weight:700}
+.plan h3{font-size:clamp(28px,3vw,40px);line-height:1.12;font-weight:900;margin-bottom:12px}
+.plan.trial h3{font-weight:300}.plan.trial h3 strong{font-weight:900}
+.plan p{color:var(--mute);max-width:34ch}
+.bigprice{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 18px;margin:20px 0 8px;padding-top:22px;border-top:1px solid var(--line)}
+.bigprice .num{font-size:clamp(96px,12vw,176px);font-weight:900;line-height:.85;letter-spacing:0;color:var(--ink);display:inline-flex;align-items:baseline;gap:10px}
+.bigprice .num .cur{font-size:.42em;font-weight:300;color:var(--blue)}
+.bigprice .per{font-size:clamp(20px,2vw,26px);font-weight:300;line-height:1.25}
+.bigprice .per b{font-weight:800}
+.after{font-size:14px;font-weight:700;color:var(--mute);margin-top:22px}
+.incl{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:0 32px}
+.incl li{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:15.5px;line-height:1.4;align-items:flex-start}
+.incl svg{width:18px;height:18px;flex:none;margin-top:2px;stroke:var(--blue);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.plan.rec .btn{margin-top:32px;width:100%;max-width:360px}
+
+/* faq */
+.faq{padding-block:clamp(72px,10vw,150px);background:var(--bg)}
+.faq-grid{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);align-items:start}
+.faq-side{position:sticky;top:110px}
+.faq-side .link-q{margin-top:28px}
+details.q{border-top:1px solid rgba(15,31,77,.2)}
+details.q:last-child{border-bottom:1px solid rgba(15,31,77,.2)}
+details.q summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 0;font-size:clamp(18px,1.7vw,22px);font-weight:700;line-height:1.35;min-height:64px}
+details.q summary::-webkit-details-marker{display:none}
+details.q summary:hover{color:var(--blue-h)}
+.pm{width:28px;height:28px;flex:none;position:relative;border:1.5px solid var(--ink);border-radius:50%}
+.pm::before,.pm::after{content:"";position:absolute;inset:50% 7px auto;height:1.5px;background:var(--ink);transition:transform .3s}
+.pm::after{transform:rotate(90deg)}
+details[open] .pm::after{transform:rotate(0)}
+details.q .a{padding:0 0 24px;color:var(--mute);max-width:56ch;font-size:17px}
+
+/* final */
+.final{padding-block:clamp(80px,11vw,160px) clamp(56px,8vw,110px);background:var(--white);text-align:start;overflow:hidden}
+.final h2{font-size:clamp(44px,8.4vw,128px);line-height:.98;font-weight:900;max-width:14ch;text-wrap:balance}
+.final h2 em{font-style:normal;font-weight:200;color:var(--mute)}
+.final .sigline{margin-top:-8px;max-width:980px}
+.final .cta-row{margin-top:8px}
+
+/* footer */
+footer{background:var(--ink);color:rgba(255,255,255,.74);padding-block:clamp(56px,7vw,96px) 28px;font-size:15px}
+.f-grid{display:grid;grid-template-columns:minmax(0,1.5fr) repeat(3,minmax(0,1fr));gap:40px}
+footer img{height:34px}
+.f-tag{margin-top:16px;font-weight:300;font-size:20px;color:#fff;line-height:1.4}
+footer h5{font-size:13.5px;font-weight:700;color:#fff;margin-bottom:16px;opacity:.9}
+footer li{padding:5px 0}
+footer a:hover{color:#fff;text-decoration:underline;text-underline-offset:4px}
+.f-bot{margin-top:56px;padding-top:22px;border-top:1px solid rgba(255,255,255,.16);display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between;font-size:14px}
+.f-bot nav{display:flex;gap:6px 24px;flex-wrap:wrap}
+
+/* responsive */
+@media (max-width:1100px){
+  .nav-links{display:none}.nav-end .login{display:none}
+  .burger{display:inline-flex}
+  .mpanel{position:fixed;inset:77px 0 0 0;background:var(--bg);z-index:49;padding:12px var(--pad) 40px;overflow:auto}
+  .mpanel.open{display:block}
+  .mpanel a,.mpanel summary{display:flex;justify-content:space-between;align-items:center;min-height:58px;font-size:20px;font-weight:700;border-bottom:1px solid var(--line);list-style:none}
+  .mpanel summary::-webkit-details-marker{display:none}
+  .mpanel details div{display:grid;padding:8px 0 14px}
+  .mpanel details div a{font-size:17px;font-weight:500;color:var(--mute);min-height:46px;border:0}
+}
+@media (max-width:900px){
+  .hero-foot,.how-head,.signer-grid,.track-grid,.faq-grid,.fields-head{grid-template-columns:1fr}
+  .hero-foot{gap:32px}
+  .steps{grid-template-columns:1fr;min-height:0;gap:8px;padding-inline-start:44px}
+  .step:nth-child(n){margin-top:0}
+  .step{padding-bottom:36px;padding-inline-start:0}
+  .step .dot{inset-inline-start:-44px;top:4px}
+  .step .body{padding-top:0}
+  .step .n{font-size:84px}
+  .stage{min-height:0}
+  .faq-side{position:static}
+  .b1,.b2{grid-column:span 12}.b3,.b4,.b5,.b6{grid-column:span 6}
+  .b3,.b4,.b5,.b6{margin-top:12px}
+  .price-grid{grid-template-columns:1fr}
+  .plan.trial{border-inline-end:0;border-bottom:1.5px solid var(--ink)}
+  .incl{grid-template-columns:1fr}
+  .f-grid{grid-template-columns:1fr 1fr}.f-grid>:first-child{grid-column:1/-1}
+  .rows li{grid-template-columns:1fr auto}
+  .rows .sgn{grid-column:1;grid-row:2}
+  .rows .st{grid-column:2;grid-row:1/3;align-self:center}
+  .fields-list a .ar{display:none}
+}
+@media (max-width:560px){
+  .nav .wrap{gap:12px;height:68px}.nav .logo img{height:28px}
+  .nav-end{gap:10px}.nav-end .btn{min-height:48px;padding:0 16px;font-size:15px}
+  .mpanel{inset-block-start:69px}
+  .btn{min-height:56px}
+  .hero .cta-row .btn{width:100%}
+  h1 .l2{padding-inline-start:12vw}
+  .b3,.b4,.b5,.b6{grid-column:span 12}
+  .nahtam{display:none}
+  .f-grid{grid-template-columns:1fr}
+  .stage::before{inset-inline:0;border-radius:140px 140px 20px 20px}
+  .phone{width:278px;height:572px}
+  .final .cta-row .btn{width:100%}
+  .l-foot{flex-direction:column;gap:4px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  h1 span{opacity:1;transform:none}
+  .js .draw{stroke-dashoffset:0}.js .seal-wrap{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Signiv"><img src="../assets/signiv-logo-horizontal-light.svg" alt="Signiv"></a>
+    <nav class="nav-links" aria-label="ראשי">
+      <a href="#how">איך זה עובד</a>
+      <a href="#benefits">יתרונות</a>
+      <a href="#pricing">מחירים</a>
+      <details class="dd" id="dd">
+        <summary>תחומים</summary>
+        <div class="dd-panel">
+          <a href="#fields">רואי חשבון</a><a href="#fields">פיננסים</a><a href="#fields">משאבי אנוש</a>
+          <a href="#fields">אקדמיה וחינוך</a><a href="#fields">נדל"ן</a><a href="#fields">עולם הרכב</a>
+          <a href="#fields">אחזקה וניקיון</a><a href="#fields">עורכי דין</a><a href="#fields">אנרגיה</a>
+          <a href="#fields">הפקות ובידור</a><a href="#fields">ביטוח ופנסיה</a><a href="#fields">תעשייה וייצור</a>
+          <a href="#fields">תיירות</a>
+        </div>
+      </details>
+      <a href="#faq">שאלות נפוצות</a>
+      <a href="#contact">צרו קשר</a>
+    </nav>
+    <div class="nav-end">
+      <a class="login" href="#">כניסה</a>
+      <a class="btn btn-p" href="#signup">הרשמה בחינם</a>
+      <button class="burger" id="burger" aria-label="תפריט" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="mpanel" id="mpanel">
+  <a href="#how">איך זה עובד</a><a href="#benefits">יתרונות</a><a href="#pricing">מחירים</a>
+  <details><summary>תחומים</summary><div>
+    <a href="#fields">רואי חשבון</a><a href="#fields">פיננסים</a><a href="#fields">משאבי אנוש</a><a href="#fields">אקדמיה וחינוך</a><a href="#fields">נדל"ן</a><a href="#fields">עולם הרכב</a><a href="#fields">אחזקה וניקיון</a><a href="#fields">עורכי דין</a><a href="#fields">אנרגיה</a><a href="#fields">הפקות ובידור</a><a href="#fields">ביטוח ופנסיה</a><a href="#fields">תעשייה וייצור</a><a href="#fields">תיירות</a>
+  </div></details>
+  <a href="#faq">שאלות נפוצות</a><a href="#contact">צרו קשר</a><a href="#">כניסה</a>
+</div>
+
+<main id="top">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Signiv, חתימה על מסמכים מכל מכשיר</div>
+    <h1>
+      <span class="l1">חתימה דיגיטלית</span>
+      <span class="l2">על מסמכים,</span>
+      <span class="l3">מכל מקום</span>
+    </h1>
+
+    <div class="sigline" aria-hidden="true">
+      <svg viewBox="0 0 1000 170" fill="none">
+        <path class="ink draw" pathLength="1" style="--d:2.6s;--dl:.9s;stroke-width:5.5" d="M940 118 C936 70 922 26 896 22 C872 20 878 96 900 112 C914 122 930 96 920 70 C912 48 880 50 862 84 C850 108 864 120 880 108 C900 92 880 56 842 62 C806 68 790 118 764 118 C744 118 748 76 728 76 C708 76 710 116 690 114 C668 112 676 40 640 36 C612 34 626 110 600 114 C578 118 580 80 560 82 C540 84 548 118 524 118 C494 118 480 66 450 70 C424 74 436 120 408 122 C380 124 372 92 350 96 C332 99 340 132 306 134 C240 138 190 126 130 124"/>
+        <path class="ink draw" pathLength="1" style="--d:1.2s;--dl:3.1s;stroke:var(--blue);stroke-width:2" d="M900 142 C650 160 400 152 170 162"/>
+        <g class="seal-wrap" style="--dl:3.6s">
+          <circle cx="78" cy="116" r="38" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+          <path d="M60 116 L74 130 L98 102" stroke="#16a34a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+      </svg>
+      <div class="nahtam"><b>נחתם</b>דנה לוי, הסכם שירות</div>
+    </div>
+
+    <div class="hero-foot">
+      <div>
+        <p class="lead">שולחים מסמך לחתימה, והלקוחות <strong>חותמים מהנייד בדקה</strong>, בלי להדפיס ובלי להתקין כלום.</p>
+        <div class="cta-row">
+          <a class="btn btn-p" id="signup" href="#signup">הרשמה בחינם
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a>
+          <a class="link-q" href="#how">ראו איך זה עובד</a>
+        </div>
+      </div>
+      <ul class="trust">
+        <li>ללא התקנה <svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M10 18h4"/></svg></li>
+        <li>מכל מכשיר <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></svg></li>
+        <li>תיעוד של תהליך החתימה <svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H7z"/><path d="M10 12h6M10 16h4"/></svg></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="mark"><span>01</span><b>איך זה עובד</b><i></i></div>
+    <div class="how-head">
+      <h2 class="h2">שלושה צעדים.<br><em>קו אחד.</em></h2>
+      <p class="lead">מעלים, מגדירים, שולחים. מכאן המסמך ממשיך לבד, ואתם רואים איפה הוא עומד.</p>
+    </div>
+    <div class="steps" id="steps">
+      <svg class="flow" id="flow" aria-hidden="true"><path class="ink draw" pathLength="1" id="flowp" style="--d:2.8s;stroke-width:3.5" d=""/></svg>
+      <article class="step"><i class="dot"></i><div class="body"><span class="n">01</span><h3>מעלים מסמך</h3><p>בוחרים קובץ מהמחשב או מהנייד, או מעלים תמונה של מסמך.</p></div></article>
+      <article class="step"><i class="dot"></i><div class="body"><span class="n">02</span><h3>מגדירים מי חותם ואיפה</h3><p>מוסיפים את החותמים וממקמים את שדה החתימה בדיוק במקום הנכון במסמך.</p></div></article>
+      <article class="step"><i class="dot"></i><div class="body"><span class="n">03</span><h3>שולחים ועוקבים</h3><p>הקישור יוצא במייל, והסטטוס מתעדכן ברשימה כל עוד המסמך בדרך.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNER -->
+<section class="signer" id="signer">
+  <div class="wrap">
+    <div class="signer-grid">
+      <div class="stage">
+        <div class="phone" aria-label="מסך החתימה אצל הלקוח">
+          <div class="screen">
+            <div class="island"></div>
+            <div class="sbar"><span>10:43</span><span></span></div>
+            <div class="urlp"><svg viewBox="0 0 12 12"><rect x="2" y="5" width="8" height="6" rx="1.5"/><path d="M4 5V3.5a2 2 0 0 1 4 0V5"/></svg>signiv.co.il</div>
+            <div class="doc">
+              <h4>הסכם שירות</h4>
+              <div class="sec">1. הצדדים להסכם</div>
+              <div class="sk" style="width:100%"></div><div class="sk" style="width:86%"></div><div class="sk" style="width:62%"></div>
+              <div class="sec">2. תיאור השירות</div>
+              <div class="sk" style="width:100%"></div><div class="sk" style="width:92%"></div><div class="sk" style="width:48%"></div>
+              <div class="sigbox" id="sigbox">
+                <div class="cap"><span id="sigcap">חתמו כאן באצבע</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></div>
+                <svg class="sg" viewBox="0 0 260 70"><path class="ink draw" id="phsig" pathLength="1" style="--d:1.8s;stroke-width:2.6" d="M248 40 C236 14 214 12 206 34 C200 52 224 50 226 36 C228 24 196 16 184 40 C176 56 164 52 160 38 C156 26 144 26 138 42 C132 56 122 38 108 34 C94 30 92 56 80 54 C66 52 70 22 52 26 C40 30 52 54 34 54 M30 58 C80 60 150 56 236 54"/></svg>
+                <div class="who">דנה לוי</div>
+              </div>
+            </div>
+            <button class="okbtn" id="okbtn" type="button">אשר וחתום <svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="mark"><span>02</span><b>מהצד של החותם</b><i></i></div>
+        <h2 class="h2" style="font-size:clamp(34px,5vw,68px)">הלקוח חותם<br><em>בפחות מדקה.</em></h2>
+        <ol class="beats" style="margin-top:36px;padding:0">
+          <li><h3>מקבל קישור ב-SMS או במייל</h3></li>
+          <li><h3>נפתח בדפדפן, בלי אפליקציה</h3></li>
+          <li><h3>חותם באצבע על המסך</h3></li>
+          <li><h3>לוחץ "אשר וחתום"</h3><p>המסמך עובר לסטטוס נחתם, ועותק חתום נשלח במייל. נסו בעצמכם: הכפתור בטלפון עובד.</p></li>
+        </ol>
+        <div class="promise"><span>החותם לא צריך חשבון</span><span>מכל מכשיר</span><span>בלי להתקין כלום</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="ben" id="benefits">
+  <div class="wrap">
+    <div class="mark"><span>03</span><b>יתרונות</b><i></i></div>
+    <div class="ben-grid">
+      <article class="b b1"><span class="k">עיקר העניין</span><h3>פחות התעסקות.</h3><p>בלי להדפיס, לסרוק ולרדוף. המסמך יוצא, חוזר חתום, ואתם ממשיכים לעבודה.</p></article>
+      <article class="b b2"><span class="k">ובנייד</span><h3>חתימה <strong>גם מהנייד</strong></h3><p>הלקוח חותם באצבע, מכל מכשיר, בלי להתקין אפליקציה.</p></article>
+      <article class="b b3"><span class="k">מעקב</span><h3>רואים את מצב המסמך</h3><p>נשלח, נצפה, נחתם. הכול ברשימה אחת.</p></article>
+      <article class="b b4"><span class="k">חיסכון</span><h3>תבניות לשימוש חוזר</h3><p>מסמך שנשלח שוב ושוב מוכן לשליחה בלחיצה.</p></article>
+      <article class="b b5"><span class="k">תיעוד</span><h3>ציר זמן עם תיעוד</h3><p>לכל מסמך יש היסטוריה של מה קרה ומתי.</p></article>
+      <article class="b b6"><span class="k">סדר</span><h3>אנשי הקשר <span style="white-space:nowrap">במקום אחד</span></h3><p>ספר אנשי קשר שחוסך להקליד את אותם פרטים פעמיים.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- TRACKING -->
+<section class="track" id="tracking">
+  <div class="wrap">
+    <div class="mark"><span>04</span><b>מעקב</b><i></i></div>
+    <div class="track-grid">
+      <div>
+        <h2 class="h2">לא צריך לנחש <em>איפה המסמך עומד.</em></h2>
+        <p class="lead">טיוטה, נשלח, נצפה, נחתם. כל מסמך עם הסטטוס שלו, וכל סטטוס כתוב במילים, לא רק בצבע. לחצו על סטטוס כדי לסנן.</p>
+      </div>
+      <div class="ledger">
+        <div class="l-top"><b>המסמכים שלי</b><small>ספר מסמכים</small></div>
+        <div class="filters" role="group" aria-label="סינון לפי סטטוס">
+          <button aria-pressed="true" data-f="all">הכל</button>
+          <button aria-pressed="false" data-f="draft">טיוטה</button>
+          <button aria-pressed="false" data-f="sent">נשלח לחתימה</button>
+          <button aria-pressed="false" data-f="seen">נצפה</button>
+          <button aria-pressed="false" data-f="signed">נחתם</button>
+          <button aria-pressed="false" data-f="rej">נדחה</button>
+          <button aria-pressed="false" data-f="exp">פג תוקף</button>
+        </div>
+        <ul class="rows" id="rows">
+          <li data-s="draft"><span class="doc-n">מסמך לפתיחת תיק</span><span class="sgn">ישראל ישראלי</span><span class="st s-draft">טיוטה</span></li>
+          <li data-s="sent"><span class="doc-n">אישור פרטי לקוח</span><span class="sgn">דנה לוי</span><span class="st s-sent">נשלח לחתימה</span></li>
+          <li data-s="seen"><span class="doc-n">הסכם שירות</span><span class="sgn">איתי כהן</span><span class="st s-seen">נצפה</span></li>
+          <li data-s="signed"><span class="doc-n">אישור קבלת מסמך</span><span class="sgn">נועה ישראלי</span><span class="st s-signed">נחתם</span></li>
+          <li data-s="rej"><span class="doc-n">טופס עדכון פרטים</span><span class="sgn">אור לוי</span><span class="st s-rej">נדחה</span></li>
+          <li data-s="exp"><span class="doc-n">טופס הרשאה</span><span class="sgn">רוני כהן</span><span class="st s-exp">פג תוקף</span></li>
+        </ul>
+        <div class="l-foot"><span>שש שורות, שישה סטטוסים</span><span>מתעדכן בזמן שהמסמך זז</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FIELDS -->
+<section class="fields" id="fields">
+  <div class="wrap">
+    <div class="mark"><span>05</span><b>תחומים</b><i></i></div>
+    <div class="fields-head">
+      <h2 class="h2">לכל עסק <em>שצריך חתימה.</em></h2>
+      <p class="lead">מסמכים הם חלק מהעבודה, והחתימה לא צריכה לעצור אותה.</p>
+    </div>
+    <ul class="fields-list">
+      <li><a href="#signup">משרדי רואי חשבון <svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a></li>
+      <li><a href="#signup">עורכי דין <svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a></li>
+      <li><a href="#signup">נדל"ן <svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a></li>
+      <li><a href="#signup">משאבי אנוש <svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a></li>
+      <li><a href="#signup">עסקים קטנים <svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="price" id="pricing">
+  <div class="wrap">
+    <div class="mark"><span>06</span><b>מחירים</b><i></i></div>
+    <h2 class="h2">החבילה שמתאימה <em>לעבודה שלכם.</em></h2>
+    <div class="price-grid">
+      <div class="plan trial">
+        <div>
+          <div class="tag">להתחלה</div>
+          <h3><strong>30 יום</strong> נסיון ללא עלות</h3>
+          <p>נרשמים ומנסים על מסמך אמיתי, לפני שמחליטים.</p>
+        </div>
+        <a class="btn btn-s" href="#signup">הרשמה</a>
+      </div>
+      <div class="plan rec">
+        <div class="tag"><b>מומלצת</b>לעסק שעובד עם מסמכים</div>
+        <h3>מבצע עד סוף 2027 ללא עלות</h3>
+        <div class="after">ואחרי המבצע</div>
+        <div class="bigprice">
+          <span class="num" dir="ltr">50<span class="cur">₪</span></span>
+          <span class="per"><b>+ מע"מ</b><br>לחודש</span>
+        </div>
+        <ul class="incl">
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>שליחת מסמכים מהמחשב ומהנייד</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>חתימה בלי חשבון</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>מייל אוטומטי כשנחתם</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>תבניות לשליחה חוזרת</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>ספר אנשי קשר</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>מעקב אחרי סטטוס</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>הורדת המסמך החתום</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>העלאת תמונה כמסמך</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>מיקום החתימה בדיוק</li>
+        </ul>
+        <a class="btn btn-p" href="#signup">הרשמה בחינם
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="wrap">
+    <div class="mark"><span>07</span><b>שאלות נפוצות</b><i></i></div>
+    <div class="faq-grid">
+      <div class="faq-side">
+        <h2 class="h2">טוב <em>ששאלתם.</em></h2>
+        <p class="lead" style="margin-top:24px">עוד שאלה? נשמח לענות.</p>
+        <a class="link-q" href="#contact">אפשר לדבר איתנו</a>
+      </div>
+      <div id="faqlist">
+        <details class="q" open><summary>מה ההבדל בין חתימה דיגיטלית לחתימה אלקטרונית?<i class="pm"></i></summary><div class="a">בשימוש יומיומי המושגים נאמרים לעיתים לאותו דבר: חתימה על מסמך במסך, בלי נייר. במערכת שלנו החותם חותם באצבע על המסמך, והמערכת שומרת תיעוד של תהליך החתימה.</div></details>
+        <details class="q"><summary>איך שולחים מסמך לחתימה דיגיטלית?<i class="pm"></i></summary><div class="a">מעלים את המסמך, מגדירים מי חותם ואיפה, ושולחים. החותם מקבל קישור ב-SMS או במייל.</div></details>
+        <details class="q"><summary>האם אפשר לחתום על PDF מהנייד?<i class="pm"></i></summary><div class="a">כן. החותם פותח את הקישור בדפדפן בנייד, רואה את המסמך וחותם באצבע.</div></details>
+        <details class="q"><summary>האם החותם צריך להתקין משהו או להירשם?<i class="pm"></i></summary><div class="a">לא. אין אפליקציה להתקין, והחותם לא צריך חשבון.</div></details>
+        <details class="q"><summary>באילו מכשירים אפשר לחתום?<i class="pm"></i></summary><div class="a">בכל מכשיר עם דפדפן: טלפון, טאבלט או מחשב.</div></details>
+        <details class="q"><summary>איך אני יודע שהמסמך נחתם?<i class="pm"></i></summary><div class="a">הסטטוס ברשימת המסמכים משתנה ל"נחתם", ונשלח אליכם מייל אוטומטי. אפשר גם להוריד את המסמך החתום.</div></details>
+        <details class="q"><summary>מה קורה אם החותם לא חותם?<i class="pm"></i></summary><div class="a">המסמך לא יוצג כנחתם עד להשלמת החתימה. אפשר לבדוק ברשימת המסמכים אם הקישור נשלח או נצפה.</div></details>
+        <details class="q"><summary>איפה נשמרים המסמכים?<i class="pm"></i></summary><div class="a">המסמכים נשמרים בחשבון שלכם במערכת, ואפשר להוריד משם את המסמך החתום.</div></details>
+        <details class="q"><summary>איך מתחילים?<i class="pm"></i></summary><div class="a">נרשמים למערכת, מעלים מסמך, מגדירים את החותמים ואת שדות החתימה ושולחים במייל.</div></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section class="final" id="final">
+  <div class="wrap">
+    <div class="mark"><span>08</span><b>מתחילים</b><i></i></div>
+    <h2>מוכנים לשלוח <em>את המסמך הראשון?</em></h2>
+    <div class="sigline" aria-hidden="true">
+      <svg viewBox="0 0 1000 170" fill="none">
+        <path class="ink draw" pathLength="1" style="--d:2.4s;stroke-width:5" d="M940 118 C936 70 922 26 896 22 C872 20 878 96 900 112 C914 122 930 96 920 70 C912 48 880 50 862 84 C850 108 864 120 880 108 C900 92 880 56 842 62 C806 68 790 118 764 118 C744 118 748 76 728 76 C708 76 710 116 690 114 C668 112 676 40 640 36 C612 34 626 110 600 114 C578 118 580 80 560 82 C540 84 548 118 524 118 C494 118 480 66 450 70 C424 74 436 120 408 122 C380 124 372 92 350 96 C332 99 340 132 306 134 C240 138 190 126 130 124"/>
+        <g class="seal-wrap" style="--dl:2.6s">
+          <circle cx="78" cy="116" r="38" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+          <path d="M60 116 L74 130 L98 102" stroke="#16a34a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+      </svg>
+    </div>
+    <div class="cta-row">
+      <a class="btn btn-p" href="#signup">הרשמה בחינם
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a>
+      <span class="link-q" style="border:0;cursor:default">30 יום נסיון ללא עלות</span>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="f-grid">
+      <div>
+        <img src="../assets/signiv-logo-horizontal-dark.svg" alt="Signiv">
+        <p class="f-tag">מסמכים עוברים.<br>העבודה מתקדמת.</p>
+      </div>
+      <div>
+        <h5>קישורים</h5>
+        <ul>
+          <li><a href="#">חתימה דיגיטלית על מסמכים</a></li>
+          <li><a href="#">חתימה מרחוק מהנייד</a></li>
+          <li><a href="#">סוגי חתימה אלקטרונית</a></li>
+          <li><a href="#">חוק החתימה האלקטרונית</a></li>
+          <li><a href="#">איך לחתום על PDF</a></li>
+          <li><a href="#pricing">מחירים</a></li>
+          <li><a href="#contact">צרו קשר</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>תחומים</h5>
+        <ul>
+          <li><a href="#fields">רואי חשבון</a></li><li><a href="#fields">עורכי דין</a></li><li><a href="#fields">נדל"ן</a></li><li><a href="#fields">משאבי אנוש</a></li><li><a href="#fields">עסקים קטנים</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>צרו קשר</h5>
+        <ul>
+          <li>שעות פעילות: א'-ה' <span dir="ltr">9:00-17:00</span></li>
+          <li>תוצרת הארץ 3, פתח תקווה</li>
+          <li><a href="mailto:sales@signiv.co.il" dir="ltr">sales@signiv.co.il</a></li>
+          <li><a href="mailto:support@signiv.co.il" dir="ltr">support@signiv.co.il</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="f-bot">
+      <nav><a href="#">תנאי שימוש</a><a href="#">מדיניות פרטיות</a><a href="#">הצהרת נגישות</a></nav>
+      <span>© <span dir="ltr">2026 Signiv</span></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  document.documentElement.classList.add('js');
+  var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+
+  /* mobile menu */
+  var b=$('#burger'),p=$('#mpanel');
+  b.addEventListener('click',function(){var o=p.classList.toggle('open');b.setAttribute('aria-expanded',o)});
+  $$('#mpanel a').forEach(function(a){a.addEventListener('click',function(){p.classList.remove('open');b.setAttribute('aria-expanded',false)})});
+  /* dropdown: open on hover for desktop */
+  var dd=$('#dd');
+  dd.addEventListener('mouseenter',function(){dd.open=true});dd.addEventListener('mouseleave',function(){dd.open=false});
+
+  /* hero strokes start on load */
+  $$('.hero .draw,.hero .seal-wrap').forEach(function(e){requestAnimationFrame(function(){requestAnimationFrame(function(){e.classList.add('in')})})});
+
+  /* steps flow line built from the real dot positions */
+  var box=$('#steps'),flow=$('#flowp'),dots=$$('.dot',box);
+  function build(){
+    var r=box.getBoundingClientRect(),pts=dots.map(function(d){var q=d.getBoundingClientRect();return [q.left+q.width/2-r.left,q.top+q.height/2-r.top]});
+    var horiz=window.innerWidth>900,d='';
+    if(horiz){
+      var W=r.width,y0=pts[0][1]-70;
+      d='M'+(W+8)+' '+y0+' C'+(W-40)+' '+(y0-30)+' '+(pts[0][0]+80)+' '+(pts[0][1]-40)+' '+pts[0][0]+' '+pts[0][1];
+      for(var i=1;i<pts.length;i++){var a=pts[i-1],c=pts[i],mx=(a[0]+c[0])/2;d+=' C'+(a[0]-90)+' '+(a[1]+90)+' '+(c[0]+90)+' '+(c[1]-90)+' '+c[0]+' '+c[1]}
+      var L=pts[2];d+=' C'+(L[0]-60)+' '+(L[1]+50)+' '+(L[0]-120)+' '+(L[1]-70)+' '+(L[0]-190)+' '+(L[1]-10)+' C'+(L[0]-230)+' '+(L[1]+20)+' '+(L[0]-200)+' '+(L[1]+70)+' '+(L[0]-150)+' '+(L[1]+40);
+    }else{
+      var x=pts[0][0];d='M'+x+' -10 L'+x+' '+pts[0][1];
+      for(var j=1;j<pts.length;j++){var a2=pts[j-1],c2=pts[j];d+=' C'+(a2[0]+22)+' '+(a2[1]+70)+' '+(c2[0]-22)+' '+(c2[1]-70)+' '+c2[0]+' '+c2[1]}
+      var L2=pts[2];d+=' C'+(L2[0]+20)+' '+(L2[1]+60)+' '+(L2[0]-22)+' '+(L2[1]+90)+' '+L2[0]+' '+(r.height-4);
+    }
+    flow.setAttribute('d',d);
+  }
+  build();window.addEventListener('resize',build);document.fonts&&document.fonts.ready.then(build);
+
+  /* draw-on-scroll for the rest */
+  var targets=$$('.draw,.seal-wrap').filter(function(e){return !e.closest('.hero')});
+  function reveal(e){e.classList.add('in')}
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){reveal(en.target);io.unobserve(en.target)}})},{threshold:.25});
+    targets.forEach(function(t){io.observe(t)});
+  }else targets.forEach(reveal);
+  setTimeout(function(){targets.forEach(function(e){if(!e.classList.contains('in')){e.style.transition='none';reveal(e)}})},3500);
+
+  /* ledger filter */
+  var fb=$$('.filters button'),rows=$$('#rows li');
+  fb.forEach(function(bn){bn.addEventListener('click',function(){
+    fb.forEach(function(x){x.setAttribute('aria-pressed',x===bn)});
+    var f=bn.dataset.f;rows.forEach(function(r){r.style.display=(f==='all'||r.dataset.s===f)?'':'none'});
+  })});
+
+  /* phone: sign it */
+  var ok=$('#okbtn'),sb=$('#sigbox'),cap=$('#sigcap');
+  ok.addEventListener('click',function(){
+    sb.classList.add('done');cap.textContent='נחתם, ועותק נשלח במייל';
+    ok.disabled=true;ok.firstChild.textContent='נחתם ';
+  });
+})();
+</script>
+</body>
+</html>
