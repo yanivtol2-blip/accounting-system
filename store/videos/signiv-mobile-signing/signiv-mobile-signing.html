@@ -267,11 +267,21 @@ body { font-family: var(--font); color: #fff; background: #0f1f4d; -webkit-font-
   </div>
 </div>
 
+<script src="timing.js"></script>
 <script>
 (() => {
   const W = innerWidth, H = innerHeight, V = H > W;
   document.body.classList.add(V ? 'v' : 'h');
-  window.DUR = 45000;
+  // the story is drawn in its own 45 s; timing.js (from the voice) stretches it where a line needs more room
+  const WARP = window.WARP || [[0, 0], [45000, 45000]];
+  window.DUR = WARP[WARP.length - 1][0];
+  const story = (t) => {
+    for (let i = 1; i < WARP.length; i++) {
+      const [v0, s0] = WARP[i - 1], [v1, s1] = WARP[i];
+      if (t <= v1) return v1 === v0 ? s1 : s0 + (s1 - s0) * (t - v0) / (v1 - v0);
+    }
+    return WARP[WARP.length - 1][1];
+  };
   window.geomWarnings = [];
 
   const $ = (id) => document.getElementById(id);
@@ -295,7 +305,7 @@ body { font-family: var(--font); color: #fff; background: #0f1f4d; -webkit-font-
   // finger positions, in screen pixels at scale 1, measured once from the real layout
   let P = { notif: [0, 0], approve: [0, 0], send: [0, 0] };
   function measure() {
-    window.seek(0);
+    draw(0);
     const sr = screen.getBoundingClientRect(), k = sr.width / 366;
     const rel = (el, dx = .5, dy = .5) => { const r = el.getBoundingClientRect(); return [(r.left - sr.left + r.width * dx) / k, (r.top - sr.top + r.height * dy) / k]; };
     P.notif = rel($('notif'), .45, .6);
@@ -307,7 +317,8 @@ body { font-family: var(--font); color: #fff; background: #0f1f4d; -webkit-font-
 
   function place(el, x, y, s = 1) { el.style.transform = `translate(${x}px, ${y}px) scale(${s})`; }
 
-  window.seek = (t) => {
+  window.seek = (t) => draw(story(t));
+  function draw(t) {
     // background glow drifts slowly
     place($('glowA'), lerp(V ? -380 : 900, V ? 120 : 1200, t / 45000) + Math.sin(t / 3000) * 40, V ? 900 + Math.cos(t / 4000) * 60 : -300);
     place($('glowB'), V ? 500 : -200, lerp(V ? -200 : 500, V ? 300 : 700, t / 45000));
@@ -432,7 +443,7 @@ body { font-family: var(--font); color: #fff; background: #0f1f4d; -webkit-font-
     const tg = document.querySelector('.end .tag'), uk = pr(t, 40900, 41500), ul = document.querySelector('.end .url'), ukk = pr(t, 41500, 42100);
     tg.style.opacity = uk; tg.style.transform = `translateY(${(1 - uk) * 24}px)`;
     ul.style.opacity = ukk; ul.style.transform = `translateY(${(1 - ukk) * 24}px)`;
-  };
+  }
 
   window.ready = (async () => {
     await document.fonts.ready;
@@ -446,14 +457,14 @@ body { font-family: var(--font); color: #fff; background: #0f1f4d; -webkit-font-
     });
     // key elements stay inside the safe area of a vertical post (above y=1680)
     if (V) {
-      window.seek(26000);
+      draw(26000);
       const ap = $('approve').getBoundingClientRect();
       if (ap.bottom > 1680) window.geomWarnings.push(`approve button ends at y=${Math.round(ap.bottom)} (> 1680)`);
-      window.seek(37500);
+      draw(37500);
       const last = chips[2].getBoundingClientRect();
       if (last.bottom > 1680) window.geomWarnings.push(`last recap chip ends at y=${Math.round(last.bottom)} (> 1680)`);
     }
-    window.seek(0);
+    draw(0);
   })();
 })();
 </script>
